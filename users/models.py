@@ -17,4 +17,26 @@ class User(AbstractUser):
 
     role = models.PositiveSmallIntegerField(choices=Role.choices, default=Role.STUDENT)
 
-class 
+class Admin(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, limit_choices_to={'role': User.Role.ADMIN})
+    title = models.CharField(max_length="50")
+
+class Instructor(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, limit_choices_to={'role': User.Role.INSTRUCTOR})
+    specialty = models.CharField(max_length="50")
+    bio = models.CharField(max_length="255")
+
+    class AcademicTitle(models.IntegerChoices):
+        HEAD_OF_DEPARTMENT = 1, "Head Of Department"
+        PROFESSOR = 2, 'Professor'
+        ASSOCIATE_PROFESSOR = 3, 'Associate Professor'
+        ASSISTANT_PROFESSOR = 4, 'Assistant Professor'
+        POST_DOC = 5, "PostDoc"
+
+    academic_title = models.PositiveSmallIntegerField(choices=AcademicTitle.choices)
+
+class Student(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, limit_choices_to={'role': User.Role.STUDENT})
+    enrollment_year = models.PositiveSmallIntegerField()
+    gpa = models.FloatField()
+    funded = models.BooleanField()
