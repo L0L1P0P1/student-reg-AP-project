@@ -1,7 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-# Create your models here.
+class Major(models.Model):
+    name = models.CharField(max_length="255")
 
 class User(AbstractUser):
     first_name = models.CharField(max_length=50)
@@ -39,4 +40,5 @@ class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, limit_choices_to={'role': User.Role.STUDENT})
     enrollment_year = models.PositiveSmallIntegerField()
     gpa = models.FloatField()
+    major = models.ForeignKey(Major, on_delete=models.SET_NULL)
     funded = models.BooleanField()
