@@ -2,14 +2,15 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 class Major(models.Model):
-    name = models.CharField(max_length="255")
+    name = models.CharField(max_length=255)
+    
+    def __str__(self):
+        return self.name
 
 class User(AbstractUser):
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    phone_number = models.CharField(max_length=11, unique=True)
-    national_id = models.CharField(max_length=10, unique=True)
-    email = models.CharField(max_length=254, unique=True, blank=True)
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    national_id = models.CharField(max_length=20, blank=True, null=True)
+    email = models.EmailField(max_length=254, unique=True)
     
     class Role(models.IntegerChoices):
         ADMIN = 1, 'Admin'
@@ -18,15 +19,15 @@ class User(AbstractUser):
 
     role = models.PositiveSmallIntegerField(choices=Role.choices, default=Role.STUDENT)
 
-class Admin(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, limit_choices_to={'role': User.Role.ADMIN})
-    title = models.CharField(max_length="50")
+class AdminProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='admin_profile')
+    title = models.CharField(max_length=50)
 
-class Instructor(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, limit_choices_to={'role': User.Role.INSTRUCTOR})
-    specialty = models.CharField(max_length="50")
-    bio = models.CharField(max_length="255")
-
+class InstructorProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='instructor_profile')
+    specialty = models.CharField(max_length=50)
+    bio = models.TextField(max_length=500, blank=True)
+    
     class AcademicTitle(models.IntegerChoices):
         HEAD_OF_DEPARTMENT = 1, "Head Of Department"
         PROFESSOR = 2, 'Professor'
@@ -36,9 +37,12 @@ class Instructor(models.Model):
 
     academic_title = models.PositiveSmallIntegerField(choices=AcademicTitle.choices)
 
-class Student(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, limit_choices_to={'role': User.Role.STUDENT})
+class StudentProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='student_profile')
     enrollment_year = models.PositiveSmallIntegerField()
     gpa = models.FloatField()
-    major = models.ForeignKey(Major, on_delete=models.SET_NULL)
-    funded = models.BooleanField()
+    major = models.ForeignKey(Major, null=True, blank=True, on_delete=models.SET_NULL)
+    funded = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['enrollment_year']
