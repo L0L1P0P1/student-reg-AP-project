@@ -4,7 +4,7 @@ from django.db import models
 class Major(models.Model):
     name = models.CharField(max_length=255)
     
-    def __str__(self):
+    def __str__(self): # type: ignore 
         return self.name
 
 class User(AbstractUser):
@@ -17,14 +17,19 @@ class User(AbstractUser):
         INSTRUCTOR = 2, 'Instructor'
         STUDENT = 3, 'Student'
 
-    role = models.PositiveSmallIntegerField(choices=Role.choices, default=Role.STUDENT)
+    role = models.PositiveSmallIntegerField(choices=Role.choices, default=Role.STUDENT) # type: ignore
 
-class AdminProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='admin_profile')
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+
+class Admin(User):
     title = models.CharField(max_length=50)
+    
+    def save(self, *args, **kwargs):
+        self.role = User.Role.ADMIN
+        super().save(*args, **kwargs)
 
-class InstructorProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='instructor_profile')
+class Instructor(User):
     specialty = models.CharField(max_length=50)
     bio = models.TextField(max_length=500, blank=True)
     
@@ -36,13 +41,21 @@ class InstructorProfile(models.Model):
         POST_DOC = 5, "PostDoc"
 
     academic_title = models.PositiveSmallIntegerField(choices=AcademicTitle.choices)
+    
+    def save(self, *args, **kwargs):
+        self.role = User.Role.INSTRUCTOR
+        super().save(*args, **kwargs)
 
-class StudentProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='student_profile')
+class Student(User):
     enrollment_year = models.PositiveSmallIntegerField()
     gpa = models.FloatField()
     major = models.ForeignKey(Major, null=True, blank=True, on_delete=models.SET_NULL)
-    funded = models.BooleanField(default=False)
-
-    class Meta:
+    funded = models.BooleanField(default=False) # type: ignore
+    verified = models.BooleanField(default=False) # type: ignore
+    
+    class Meta: # type: ignore 
         ordering = ['enrollment_year']
+    
+    def save(self, *args, **kwargs):
+        self.role = User.Role.STUDENT
+        super().save(*args, **kwargs)

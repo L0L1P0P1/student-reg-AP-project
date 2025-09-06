@@ -1,5 +1,5 @@
 from django.db import models
-from users.models import Major, InstructorProfile, StudentProfile
+from users.models import Instructor, Student
 
 class Unit(models.Model):
     name = models.CharField(max_length=50)
@@ -25,7 +25,7 @@ class MajorUnit(models.Model):
 
 class Course(models.Model):
     unit = models.ForeignKey(Unit, null=True, on_delete=models.SET_NULL) 
-    instructor = models.ForeignKey(InstructorProfile, null=True, on_delete=models.SET_NULL)
+    instructor = models.ForeignKey(Instructor, null=True, on_delete=models.SET_NULL)
     term = models.PositiveSmallIntegerField()
     slots = models.PositiveSmallIntegerField() 
     active = models.BooleanField()
@@ -34,7 +34,7 @@ class TimeSlots(models.Model):
     time = models.CharField(255)
 
 class CourseStudentStatus(models.Model):
-    student = models.ForeignKey(StudentProfile, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     grade = models.FloatField()
     price = models.PositiveIntegerField()

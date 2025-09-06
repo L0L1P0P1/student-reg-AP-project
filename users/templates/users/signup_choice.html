@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}ثبت نام - دانشگاه گیلان{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-12">
+    <div class="container mx-auto px-4">
+        <div class="max-w-2xl mx-auto">
+            <div class="bg-white rounded-lg shadow-md p-8">
+                <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">ثبت نام در دانشگاه گیلان</h1>
+                
+                <div class="text-center mb-8">
+                    <p class="text-gray-600 text-lg">لطفاً نوع کاربری خود را انتخاب کنید:</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <a href="{% url 'student_signup' %}" 
+                       class="bg-blue-500 hover:bg-blue-600 text-white p-6 rounded-lg text-center transition duration-200 transform hover:scale-105">
+                        <div class="text-2xl mb-2">🎓</div>
+                        <h3 class="text-xl font-semibold mb-2">دانشجو</h3>
+                        <p class="text-sm">ثبت نام به عنوان دانشجوی جدید</p>
+                    </a>
+                    
+                    <a href="{% url 'instructor_signup' %}" 
+                       class="bg-green-500 hover:bg-green-600 text-white p-6 rounded-lg text-center transition duration-200 transform hover:scale-105">
+                        <div class="text-2xl mb-2">👨‍🏫</div>
+                        <h3 class="text-xl font-semibold mb-2">استاد</h3>
+                        <p class="text-sm">ثبت نام به عنوان عضو هیئت علمی</p>
+                    </a>
+                    
+                    <a href="{% url 'admin_signup' %}" 
+                       class="bg-purple-500 hover:bg-purple-600 text-white p-6 rounded-lg text-center transition duration-200 transform hover:scale-105">
+                        <div class="text-2xl mb-2">⚙️</div>
+                        <h3 class="text-xl font-semibold mb-2">مدیر</h3>
+                        <p class="text-sm">ثبت نام برای کاربران مدیریتی</p>
+                    </a>
+                </div>
+                
+                <div class="mt-8 text-center">
+                    <p class="text-gray-600">
+                        قبلاً حساب کاربری دارید؟ 
+                        <a href="{% url 'login' %}" class="text-indigo-600 hover:text-indigo-800 font-medium">وارد شوید</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

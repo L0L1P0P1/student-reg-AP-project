@@ -1,11 +1,9 @@
-<!-- templates/home.html -->
 {% extends 'base.html' %}
 
 {% block title %}سیستم ثبت نام دانشجویی{% endblock %}
 
 {% block content %}
 <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-    <!-- Header -->
     <header class="bg-white shadow-sm">
         <div class="container mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
@@ -21,19 +19,17 @@
                 </div>
                 <nav class="hidden md:flex space-x-6">
                     <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium">خانه</a>
-                    <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium">دروس</a>
                     <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium">استادان</a>
-                    <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium">درباره ما</a>
+					<a href="{% url 'about' %}" class="text-gray-600 hover:text-indigo-600 font-medium">درباره ما</a>
                 </nav>
                 <div class="flex items-center space-x-4">
                     <a href="{% url 'login' %}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-200">ورود</a>
-                    <a href="#" class="text-gray-600 hover:text-indigo-600">ثبت نام</a>
+					<a href="{% url 'signup'%}" class="text-gray-600 hover:text-indigo-600">ثبت نام</a>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Hero Section -->
     <section class="py-16 md:py-24">
         <div class="container mx-auto px-4 text-center">
             <h1 class="text-4xl md:text-6xl font-bold text-gray-800 mb-6">
@@ -53,12 +49,10 @@
         </div>
     </section>
 
-    <!-- Features Section -->
     <section class="py-16 bg-white">
         <div class="container mx-auto px-4">
             <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">ویژگی‌های سیستم</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Feature 1 -->
                 <div class="bg-gray-50 p-8 rounded-xl shadow-sm hover:shadow-md transition duration-200">
                     <div class="bg-indigo-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -71,7 +65,6 @@
                     </p>
                 </div>
 
-                <!-- Feature 2 -->
                 <div class="bg-gray-50 p-8 rounded-xl shadow-sm hover:shadow-md transition duration-200">
                     <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -84,7 +77,6 @@
                     </p>
                 </div>
 
-                <!-- Feature 3 -->
                 <div class="bg-gray-50 p-8 rounded-xl shadow-sm hover:shadow-md transition duration-200">
                     <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -100,7 +92,6 @@
         </div>
     </section>
 
-    <!-- Stats Section -->
     <section class="py-16 bg-indigo-600 text-white">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
@@ -124,7 +115,6 @@
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="bg-gray-800 text-white py-12">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">

@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'tailwind',
+    'theme',
     'courses.apps.CoursesConfig',
     'users.apps.UsersConfig',
     'django.contrib.admin',
@@ -84,11 +86,19 @@ DATABASES = {
     }
 }
 
+TAILWIND_APP_NAME = 'theme'
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
+NPM_BIN_PATH = "/run/current-system/sw/bin/npm"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
 AUTH_USER_MODEL = 'users.User'
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',

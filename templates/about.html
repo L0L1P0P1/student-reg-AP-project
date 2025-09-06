@@ -1,0 +1,143 @@
+<!-- templates/about.html -->
+{% extends 'base.html' %}
+
+{% block title %}درباره ما - سیستم دانشگاهی{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+    <div class="container mx-auto px-4">
+        <!-- Breadcrumb -->
+        <nav class="mb-8">
+            <ul class="flex space-x-2 rtl:space-x-reverse text-sm">
+                <li><a href="{% url 'home' %}" class="text-indigo-600 hover:text-indigo-800">خانه</a></li>
+                <li><span class="text-gray-500">/</span></li>
+                <li><span class="text-gray-700">درباره ما</span></li>
+            </ul>
+        </nav>
+
+        <!-- About Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">درباره دانشگاه گیلان</h1>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                دانشگاه گیلان یکی از دانشگاه‌های معتبر ایران با تمرکز بر علوم پایه، مهندسی و علوم انسانی
+            </p>
+        </div>
+
+        <!-- University Info -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden mb-12">
+            <div class="md:flex">
+                <div class="md:w-1/2 p-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">تاریخچه دانشگاه</h2>
+                    <p class="text-gray-600 mb-4">
+                        دانشگاه گیلان در سال ۱۳۵۳ به عنوان نخستین دانشگاه استان گیلان تأسیس شد. این دانشگاه با هدف پرورش نخبگان و توسعه علوم در منطقه شمال کشور شکل گرفت.
+                    </p>
+                    <p class="text-gray-600 mb-4">
+                        در طول این سال‌ها، دانشگاه گیلان توانسته است جایگاه علمی و فرهنگی مناسبی در کشور کسب کند و هزاران فارغ‌التحصیل موفق در سطوح مختلف علمی و اجرایی تربیت کند.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mt-6">
+                        <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm">۵۰ سال تجربه</span>
+                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">۱۵۰+ استاد</span>
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">۱۵ رشته</span>
+                    </div>
+                </div>
+                <div class="md:w-1/2 bg-gray-200 flex items-center justify-center p-8">
+                    <div class="bg-gray-300 border-2 border-dashed rounded-xl w-full h-64 md:h-full flex items-center justify-center">
+                        <span class="text-gray-500">تصویر دانشگاه</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mission & Vision -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <!-- Mission -->
+            <div class="bg-white p-8 rounded-xl shadow-md">
+                <div class="bg-indigo-100 w-12 h-12 rounded-lg flex items-center justify-center mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-3">ماموریت</h3>
+                <p class="text-gray-600">
+                    تربیت نیروهای متخصص و متعهد، انجام پژوهش‌های کاربردی و ارائه خدمات علمی و فرهنگی به جامعه با تأکید بر ارزش‌های اسلامی و ملی.
+                </p>
+            </div>
+
+            <!-- Vision -->
+            <div class="bg-white p-8 rounded-xl shadow-md">
+                <div class="bg-purple-100 w-12 h-12 rounded-lg flex items-center justify-center mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-3">چشم‌انداز</h3>
+                <p class="text-gray-600">
+                    تبدیل شدن به دانشگاهی معتبر در سطح ملی و بین‌المللی با تمرکز بر نوآوری، پژوهش و ارتقای کیفیت آموزش عالی.
+                </p>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="bg-white rounded-xl shadow-md p-8 mb-12">
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">آمار دانشگاه</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                <div class="p-4">
+                    <div class="text-3xl font-bold text-indigo-600 mb-2">۲۰۰۰+</div>
+                    <div class="text-gray-600">دانشجو</div>
+                </div>
+                <div class="p-4">
+                    <div class="text-3xl font-bold text-indigo-600 mb-2">۱۵۰+</div>
+                    <div class="text-gray-600">عضو هیئت علمی</div>
+                </div>
+                <div class="p-4">
+                    <div class="text-3xl font-bold text-indigo-600 mb-2">۱۵</div>
+                    <div class="text-gray-600">رشته تحصیلی</div>
+                </div>
+                <div class="p-4">
+                    <div class="text-3xl font-bold text-indigo-600 mb-2">۵۰</div>
+                    <div class="text-gray-600">سال تأسیس</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl shadow-lg p-8 text-white">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold mb-2">تماس با ما</h2>
+                <p class="opacity-90">سوالات خود را با ما در میان بگذارید</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <div>
+                    <div class="bg-white bg-opacity-20 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="font-bold mb-1">آدرس</h3>
+                    <p class="text-sm opacity-90">رشت، خیابان دانشگاه</p>
+                </div>
+                <div>
+                    <div class="bg-white bg-opacity-20 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                        </svg>
+                    </div>
+                    <h3 class="font-bold mb-1">تلفن</h3>
+                    <p class="text-sm opacity-90">۰۱۳-۱۲۳۴۵۶۷۸</p>
+                </div>
+                <div>
+                    <div class="bg-white bg-opacity-20 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="font-bold mb-1">ایمیل</h3>
+                    <p class="text-sm opacity-90">info@guilan.ac.ir</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

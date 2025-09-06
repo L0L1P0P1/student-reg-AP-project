@@ -20,9 +20,10 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
+    path('', views.home, name='home'),
     path('admin/', admin.site.urls),
-    path('', views.home, name='login')  # Temporary, just because it would give an error inside a template
-    # path('login/', auth_views.LoginView.as_view(template_name=''))
+    path('about/', views.about, name='about'),
+    path('hub/', include('users.urls'))
 ]
 
 
