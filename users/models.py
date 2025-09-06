@@ -32,6 +32,7 @@ class Admin(User):
 class Instructor(User):
     specialty = models.CharField(max_length=50)
     bio = models.TextField(max_length=500, blank=True)
+    verified = models.BooleanField(default=False)  # pyright: ignore
     
     class AcademicTitle(models.IntegerChoices):
         HEAD_OF_DEPARTMENT = 1, "Head Of Department"
