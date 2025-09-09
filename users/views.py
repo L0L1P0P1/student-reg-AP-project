@@ -104,11 +104,16 @@ def admin_signup(request):
 def hub(request):
     user = request.user 
 
+    context = {
+            'user' : user
+            }
+
     if user.role == User.Role.STUDENT:
-        pass
+        return render(request, 'hub/student_hub.html', context)
     if user.role == User.Role.INSTRUCTOR:
-        pass
+        return render(request, 'hub/instructor_hub.html', context)
     if user.role == User.Role.ADMIN:
-        pass
+        return render(request, 'hub/admin_hub.html', context)
+
 
 
