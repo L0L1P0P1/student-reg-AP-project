@@ -5,6 +5,7 @@ from django.contrib import messages
 from .forms import SignUpForm, StudentSignUpForm
 from .models import User, Student, Major, Instructor, Admin
 
+
 def signup(request):
     """General signup page - user chooses role"""
     return render(request, 'users/signup_choice.html')
@@ -110,5 +111,3 @@ def hub(request):
         pass
     if user.role == User.Role.ADMIN:
         pass
-
-
