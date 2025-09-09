@@ -1,6 +1,6 @@
-# users/views.py
 from django.shortcuts import render, redirect
 from django.contrib.auth import login as auth_login
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import SignUpForm, StudentSignUpForm
 from .models import User, Student, Major, Instructor, Admin
@@ -99,3 +99,16 @@ def admin_signup(request):
         form = SignUpForm()
     
     return render(request, 'users/signup_admin.html', {'form': form})
+
+@login_required(login_url="/login/")
+def hub(request):
+    user = request.user 
+
+    if user.role == User.Role.STUDENT:
+        pass
+    if user.role == User.Role.INSTRUCTOR:
+        pass
+    if user.role == User.Role.ADMIN:
+        pass
+
+
