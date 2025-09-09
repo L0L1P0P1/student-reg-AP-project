@@ -1,8 +1,10 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from datetime import datetime
 
 class Major(models.Model):
     name = models.CharField(max_length=255)
+    codename = models.CharField(max_length=5, null=True)
     
     def __str__(self): # type: ignore 
         return self.name
@@ -25,6 +27,10 @@ class User(AbstractUser):
 class Admin(User):
     title = models.CharField(max_length=50)
     
+    class Meta: # type: ignore 
+        verbose_name = "Admin"
+        verbose_name_plural = "Admins"
+
     def save(self, *args, **kwargs):
         self.role = User.Role.ADMIN
         super().save(*args, **kwargs)
@@ -43,12 +49,17 @@ class Instructor(User):
 
     academic_title = models.PositiveSmallIntegerField(choices=AcademicTitle.choices)
     
+    class Meta: # type: ignore 
+        verbose_name = "Instructor"
+        verbose_name_plural = "Instructors"
+
     def save(self, *args, **kwargs):
         self.role = User.Role.INSTRUCTOR
         super().save(*args, **kwargs)
 
 class Student(User):
     enrollment_year = models.PositiveSmallIntegerField()
+    student_id = models.CharField(max_length=15, unique=True, blank=True)
     gpa = models.FloatField()
     major = models.ForeignKey(Major, null=True, blank=True, on_delete=models.SET_NULL)
     funded = models.BooleanField(default=False) # type: ignore
@@ -56,7 +67,37 @@ class Student(User):
     
     class Meta: # type: ignore 
         ordering = ['enrollment_year']
+        verbose_name = "Student"
+        verbose_name_plural = "Students"
     
+    def generate_student_id(self):
+        if self.major:
+            major_code = self.major.codename        
+
+        year = str(datetime.now().year)[-2:]
+        
+        prefix = f"{major_code}{year}"
+        last_student = Student.objects.filter(
+            student_id__startswith=prefix
+        ).order_by('-student_id').first()
+        
+        if last_student:
+            try:
+                last_sequence = int(last_student.student_id[len(prefix):])
+                sequence = last_sequence + 1
+            except (ValueError, IndexError):
+                sequence = 1
+        else:
+            sequence = 1
+        sequence_str = f"{sequence:04d}"
+        student_id = f"{prefix}{sequence_str}"
+        
+        return student_id
+
     def save(self, *args, **kwargs):
         self.role = User.Role.STUDENT
+        if not self.enrollment_year:
+            self.enrollment_year = datetime.now().year
+        if not self.student_id:
+            self.student_id = self.generate_student_id()
         super().save(*args, **kwargs)
