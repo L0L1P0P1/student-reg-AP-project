@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from datetime import datetime
+from courses.models import Semester
 
 class Major(models.Model):
     name = models.CharField(max_length=255)
@@ -58,6 +59,7 @@ class Instructor(User):
         super().save(*args, **kwargs)
 
 class Student(User):
+    first_semester = models.ForeignKey('courses.Semester', on_delete=models.SET_NULL, null=True)
     enrollment_year = models.PositiveSmallIntegerField()
     student_id = models.CharField(max_length=15, unique=True, blank=True)
     gpa = models.FloatField()
@@ -74,7 +76,7 @@ class Student(User):
         if self.major:
             major_code = self.major.codename  # pyright: ignore
 
-        year = str(datetime.now().year)[-2:]
+        year = str(self.first_semester.codename)[-3:-1] # pyright: ignore
         
         prefix = f"{major_code}{year}" # pyright: ignore
         last_student = Student.objects.filter(
@@ -96,8 +98,8 @@ class Student(User):
 
     def save(self, *args, **kwargs):
         self.role = User.Role.STUDENT
-        if not self.enrollment_year:
-            self.enrollment_year = datetime.now().year
+        if not self.first_semester:
+            self.first_semester = Semester.objects.filter(active=True).first() # pyright: ignore
         if not self.student_id:
             self.student_id = self.generate_student_id()
         super().save(*args, **kwargs)

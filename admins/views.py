@@ -73,7 +73,6 @@ def list_all_courses(request):
     elif active == "no":
         courses = courses.filter(semester__active=False)
 
-    if 
 
 @login_required(login_url="/login/")
 def course_creation(request):
