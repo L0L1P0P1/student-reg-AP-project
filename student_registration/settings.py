@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'instructors.apps.InstructorsConfig',
     'admins.apps.AdminsConfig',
     'courses.apps.CoursesConfig',
+    'student.apps.StudentConfig',
     'users.apps.UsersConfig',
     'django.contrib.admin',
     'django.contrib.auth',

@@ -1,6 +1,6 @@
 ## Views
 ### Student
-- [ ] See Available and Past Classes
+- [X] See Available and Past Classes
 - [ ] Selecting Classes (in a certain time + prevent invalid choices)
 - [ ] Checking Semester's Class Program
 - [ ] Checking Scores 
