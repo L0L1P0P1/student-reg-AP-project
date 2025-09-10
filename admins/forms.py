@@ -91,6 +91,14 @@ class AdminModificationForm(forms.ModelForm):
         ]
 
 class AdminSemesterCreationForm(forms.ModelForm):
+    start_date = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'}), # Explicitly set widget
+        help_text="فرمت: YYYY-MM-DD (مثال: 2024-12-31)" # Optional help text
+    )
+    end_date = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        help_text="فرمت: YYYY-MM-DD (مثال: 2024-12-31)"
+    )
     class Meta:
         model = Semester
         fields = [
@@ -101,6 +109,14 @@ class AdminSemesterCreationForm(forms.ModelForm):
         ]
 
 class AdminSemesterModificationForm(forms.ModelForm):
+    start_date = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'}), # Explicitly set widget
+        help_text="فرمت: YYYY-MM-DD (مثال: 2024-12-31)" # Optional help text
+    )
+    end_date = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        help_text="فرمت: YYYY-MM-DD (مثال: 2024-12-31)"
+    )
     class Meta:
         model = Semester
         fields = [

@@ -42,7 +42,7 @@
                 <div class="bg-white rounded-xl shadow-md p-6">
                     <h2 class="text-xl font-bold text-gray-800 mb-4">مدیریت کاربران</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a href="{% url 'admin:list_all_students' %}" class="border border-blue-200 rounded-lg p-4 hover:bg-blue-50 transition duration-200">
+                        <a href="{% url 'list_all_students' %}" class="border border-blue-200 rounded-lg p-4 hover:bg-blue-50 transition duration-200">
                             <div class="flex items-center">
                                 <div class="bg-blue-100 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -56,7 +56,7 @@
                             </div>
                         </a>
 
-                        <a href="{% url 'admin:list_all_instructors' %}" class="border border-green-200 rounded-lg p-4 hover:bg-green-50 transition duration-200">
+                        <a href="{% url 'list_all_instructors' %}" class="border border-green-200 rounded-lg p-4 hover:bg-green-50 transition duration-200">
                             <div class="flex items-center">
                                 <div class="bg-green-100 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -105,7 +105,7 @@
                 <div class="bg-white rounded-xl shadow-md p-6">
                     <h2 class="text-xl font-bold text-gray-800 mb-4">مدیریت دروس</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a href="{% url 'admin:admin_list_all_units' %}" class="border border-indigo-200 rounded-lg p-4 hover:bg-indigo-50 transition duration-200">
+                        <a href="{% url 'admin_list_all_units' %}" class="border border-indigo-200 rounded-lg p-4 hover:bg-indigo-50 transition duration-200">
                             <div class="flex items-center">
                                 <div class="bg-indigo-100 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -119,7 +119,7 @@
                             </div>
                         </a>
 
-                        <a href="{% url 'admin:list_all_courses' %}" class="border border-purple-200 rounded-lg p-4 hover:bg-purple-50 transition duration-200">
+                        <a href="{% url 'list_all_courses' %}" class="border border-purple-200 rounded-lg p-4 hover:bg-purple-50 transition duration-200">
                             <div class="flex items-center">
                                 <div class="bg-purple-100 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -133,7 +133,7 @@
                             </div>
                         </a>
 
-                        <a href="{% url 'admin:admin_unit_creation' %}" class="border border-yellow-200 rounded-lg p-4 hover:bg-yellow-50 transition duration-200">
+                        <a href="{% url 'admin_unit_creation' %}" class="border border-yellow-200 rounded-lg p-4 hover:bg-yellow-50 transition duration-200">
                             <div class="flex items-center">
                                 <div class="bg-yellow-100 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -147,7 +147,7 @@
                             </div>
                         </a>
 
-                        <a href="{% url 'admin:admin_course_creation' %}" class="border border-teal-200 rounded-lg p-4 hover:bg-teal-50 transition duration-200">
+                        <a href="{% url 'admin_course_creation' %}" class="border border-teal-200 rounded-lg p-4 hover:bg-teal-50 transition duration-200">
                             <div class="flex items-center">
                                 <div class="bg-teal-100 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -167,7 +167,7 @@
                 <div class="bg-white rounded-xl shadow-md p-6">
                     <h2 class="text-xl font-bold text-gray-800 mb-4">مدیریت ترم‌ها</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a href="{% url 'admin:admin_list_all_semesters' %}" class="border border-orange-200 rounded-lg p-4 hover:bg-orange-50 transition duration-200">
+                        <a href="{% url 'admin_list_all_semesters' %}" class="border border-orange-200 rounded-lg p-4 hover:bg-orange-50 transition duration-200">
                             <div class="flex items-center">
                                 <div class="bg-orange-100 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -181,7 +181,7 @@
                             </div>
                         </a>
 
-                        <a href="{% url 'admin:admin_semester_creation' %}" class="border border-pink-200 rounded-lg p-4 hover:bg-pink-50 transition duration-200">
+                        <a href="{% url 'admin_semester_creation' %}" class="border border-pink-200 rounded-lg p-4 hover:bg-pink-50 transition duration-200">
                             <div class="flex items-center">
                                 <div class="bg-pink-100 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">

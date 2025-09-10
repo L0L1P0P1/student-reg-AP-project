@@ -52,14 +52,14 @@ def select_course(request, course_id):
         return redirect("available_courses")
 
     # 3. Already passed this course
-    if CourseStudentStatus.objects.filter(student=student, course=course, passed=True).exists():
+    if CourseStudentStatus.objects.filter(student=student, course__unit=course.unit, passed=True).exists():
         messages.error(request, "You have already passed this course.")
         return redirect("available_courses")
 
     # 4. Check for schedule conflicts
     course_times = set(course.time_slot.all())  # Course has ManyToMany with TimeSlots
 
-    for css in CourseStudentStatus.objects.filter(student=student):
+    for css in CourseStudentStatus.objects.filter(student=student, course__semester__active=True):
         registered_times = set(css.course.time_slot.all())
         if course_times & registered_times:
             messages.error(request, "Schedule conflict with another course.")

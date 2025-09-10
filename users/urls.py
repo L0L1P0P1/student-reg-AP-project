@@ -10,7 +10,7 @@ urlpatterns = [
     path('signup/student/', views.student_signup, name='student_signup'),
     path('signup/instructor/', views.instructor_signup, name='instructor_signup'),
     # path('signup/admin/', views.admin_signup, name='admin_signup'),
-    path('admin-panel/', include('admins.urls', namespace='admin')),
-    path('instructor/', include('instructors.urls', namespace='instructor')),
-    path('student/', include('student.urls', namespace='student')),
+    path('admin-panel/', include('admins.urls')),
+    path('instructor/', include('instructors.urls')),
+    path('student/', include('student.urls')),
 ]

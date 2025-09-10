@@ -102,7 +102,6 @@ def admin_signup(request):
     
     return render(request, 'users/signup_admin.html', {'form': form})
 '''
-
 @login_required(login_url="/login/")
 def hub(request):
     user = request.user 
