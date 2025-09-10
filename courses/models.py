@@ -44,11 +44,12 @@ class Course(models.Model):
     semester = models.ForeignKey(Semester, on_delete=models.SET_NULL, null=True)
     slots = models.PositiveSmallIntegerField() 
     time_slot = models.ManyToManyField(TimeSlots)
+    price = models.PositiveIntegerField()
 
 class CourseStudentStatus(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     grade = models.FloatField()
-    price = models.PositiveIntegerField()
     paid = models.BooleanField()
-    passed = models.BooleanField()
+    passed = models.BooleanField(default=False)
+    canceled = models.BooleanField(default=False)

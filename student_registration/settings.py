@@ -33,6 +33,8 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'tailwind',
     'theme',
+    'instructors.apps.InstructorsConfig',
+    'admins.apps.AdminsConfig',
     'courses.apps.CoursesConfig',
     'users.apps.UsersConfig',
     'django.contrib.admin',
