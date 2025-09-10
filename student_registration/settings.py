@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'tailwind',
     'theme',
     'courses.apps.CoursesConfig',
+    'student.apps.StudentConfig',
     'users.apps.UsersConfig',
     'django.contrib.admin',
     'django.contrib.auth',
