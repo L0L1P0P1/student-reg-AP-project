@@ -22,7 +22,7 @@ class User(AbstractUser):
     role = models.PositiveSmallIntegerField(choices=Role.choices, default=Role.STUDENT) # type: ignore
 
     USERNAME_FIELD = 'national_id'
-    # REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = ['username']
 
 class Admin(User):
     title = models.CharField(max_length=50)
