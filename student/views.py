@@ -8,7 +8,7 @@ def available_courses(request):
 
     # Only fetch courses from active semester(s)
     available_courses = Course.objects.filter(
-        unit__majors=student.major,
+        # unit__in=student.major.units.all(),
         semester__active=True
     )
 
@@ -74,7 +74,7 @@ def select_course(request, course_id):
     )
 
     messages.success(request, f"You have successfully registered for {course.unit.name}!")
-    return redirect("student_program")
+    return redirect("available_courses")
 
 ## Checking Scores
 def check_scores(request):

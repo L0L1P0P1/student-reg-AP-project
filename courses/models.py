@@ -32,7 +32,7 @@ class MajorUnit(models.Model):
         OPTIONAL = 3, 'Optional Units'
         GENERAL = 4, 'General Units'
 
-    state = models.PositiveSmallIntegerField(choices=UnitMajorState.choices) 
+    state = models.PositiveSmallIntegerField(choices=UnitMajorState.choices, null=True) 
 
 class TimeSlots(models.Model):
     id = models.PositiveSmallIntegerField(primary_key=True)
