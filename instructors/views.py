@@ -1,8 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
-from .users import Instructor, Student, User
-from .courses import Unit, Course, CourseStudentStatus 
+from users.models import Instructor, Student, User
+from courses.models import Unit, Course, CourseStudentStatus 
 
 @login_required(login_url="/login/")
 def instructor_classes(request):
@@ -19,7 +19,7 @@ def instructor_classes(request):
 def class_management(request, pk):
     course = get_object_or_404(Course, pk=pk)
     students = CourseStudentStatus.objects.filter(course=course).select_related("student")
-    
+    # need to create someshi like ModelFormSet 
     # for now
     pass 
 
