@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from datetime import datetime
-from courses.models import Semester
 
 class Major(models.Model):
     name = models.CharField(max_length=255)
@@ -67,7 +66,6 @@ class Student(User):
     verified = models.BooleanField(default=False) # type: ignore
     
     class Meta: # type: ignore 
-        ordering = ['enrollment_year']
         verbose_name = "Student"
         verbose_name_plural = "Students"
     
@@ -98,6 +96,7 @@ class Student(User):
     def save(self, *args, **kwargs):
         self.role = User.Role.STUDENT
         if not self.first_semester:
+            from courses.models import Semester
             self.first_semester = Semester.objects.filter(active=True).first() # pyright: ignore
         if not self.student_id:
             self.student_id = self.generate_student_id()
