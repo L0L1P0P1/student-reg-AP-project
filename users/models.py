@@ -10,8 +10,8 @@ class Major(models.Model):
         return self.name
 
 class User(AbstractUser):
+    national_id = models.CharField(max_length=20, unique=True, null=False)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
-    national_id = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(max_length=254, unique=True)
     
     class Role(models.IntegerChoices):
@@ -21,8 +21,8 @@ class User(AbstractUser):
 
     role = models.PositiveSmallIntegerField(choices=Role.choices, default=Role.STUDENT) # type: ignore
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    USERNAME_FIELD = 'national_id'
+    # REQUIRED_FIELDS = ['username']
 
 class Admin(User):
     title = models.CharField(max_length=50)
@@ -72,11 +72,11 @@ class Student(User):
     
     def generate_student_id(self):
         if self.major:
-            major_code = self.major.codename        
+            major_code = self.major.codename  # pyright: ignore
 
         year = str(datetime.now().year)[-2:]
         
-        prefix = f"{major_code}{year}"
+        prefix = f"{major_code}{year}" # pyright: ignore
         last_student = Student.objects.filter(
             student_id__startswith=prefix
         ).order_by('-student_id').first()
