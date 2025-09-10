@@ -46,18 +46,29 @@
                         {% endif %}
                     </div>
                     <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-2">کد واحد</label>
-                        {{ form.codename }}
-                        {% if form.codename.errors %}
-                            <p class="text-red-500 text-xs italic mt-1">{{ form.codename.errors }}</p>
+                        <!-- Changed field name from codename to description -->
+                        <label class="block text-gray-700 text-sm font-bold mb-2">توضیحات</label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                            <p class="text-red-500 text-xs italic mt-1">{{ form.description.errors }}</p>
                         {% endif %}
                     </div>
                     <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-2">تعداد واحدها</label>
-                        {{ form.units }}
-                        {% if form.units.errors %}
-                            <p class="text-red-500 text-xs italic mt-1">{{ form.units.errors }}</p>
+                        <!-- Changed field name from units to unit_size -->
+                        <label class="block text-gray-700 text-sm font-bold mb-2">اندازه واحد (تعداد واحدها)</label>
+                        {{ form.unit_size }}
+                        {% if form.unit_size.errors %}
+                            <p class="text-red-500 text-xs italic mt-1">{{ form.unit_size.errors }}</p>
                         {% endif %}
+                    </div>
+                    <div>
+                        <!-- Added majors field -->
+                        <label class="block text-gray-700 text-sm font-bold mb-2">رشته‌های مرتبط</label>
+                        {{ form.majors }}
+                        {% if form.majors.errors %}
+                            <p class="text-red-500 text-xs italic mt-1">{{ form.majors.errors }}</p>
+                        {% endif %}
+                        <p class="text-gray-500 text-xs mt-1">رشته‌هایی که این واحد برای آن‌ها ارائه می‌شود (برای انتخاب چند رشته، کلید Ctrl را نگه دارید)</p>
                     </div>
                 </div>
                 
@@ -75,7 +86,7 @@
 </div>
 
 <style>
-    input[type="text"], input[type="number"] {
+    input[type="text"], input[type="number"], textarea, select {
         width: 100%;
         padding: 0.5rem;
         border: 1px solid #d1d5db;
@@ -83,11 +94,16 @@
         font-size: 0.875rem;
     }
     
-    input:focus {
+    input:focus, textarea:focus, select:focus {
         outline: none;
         ring: 2px;
         ring-purple-500;
         border-color: #8b5cf6;
+    }
+    /* Style the multi-select */
+    select[multiple] {
+        height: auto; /* Allow it to grow */
+        min-height: 80px; /* Set a minimum height */
     }
 </style>
 {% endblock %}

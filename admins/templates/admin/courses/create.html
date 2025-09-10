@@ -60,10 +60,27 @@
                         {% endif %}
                     </div>
                     <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-2">ظرفیت</label>
-                        {{ form.capacity }}
-                        {% if form.capacity.errors %}
-                            <p class="text-red-500 text-xs italic mt-1">{{ form.capacity.errors }}</p>
+                        <!-- Changed field name from capacity to slots -->
+                        <label class="block text-gray-700 text-sm font-bold mb-2">ظرفیت (تعداد اسلات‌ها)</label>
+                        {{ form.slots }}
+                        {% if form.slots.errors %}
+                            <p class="text-red-500 text-xs italic mt-1">{{ form.slots.errors }}</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <!-- Added time_slot field -->
+                        <label class="block text-gray-700 text-sm font-bold mb-2">اسلات زمانی</label>
+                        {{ form.time_slot }}
+                        {% if form.time_slot.errors %}
+                            <p class="text-red-500 text-xs italic mt-1">{{ form.time_slot.errors }}</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <!-- Added price field -->
+                        <label class="block text-gray-700 text-sm font-bold mb-2">قیمت (تومان)</label>
+                        {{ form.price }}
+                        {% if form.price.errors %}
+                            <p class="text-red-500 text-xs italic mt-1">{{ form.price.errors }}</p>
                         {% endif %}
                     </div>
                 </div>
@@ -82,7 +99,7 @@
 </div>
 
 <style>
-    select {
+    input[type="text"], input[type="number"], select, textarea {
         width: 100%;
         padding: 0.5rem;
         border: 1px solid #d1d5db;
@@ -90,7 +107,7 @@
         font-size: 0.875rem;
     }
     
-    select:focus {
+    input:focus, select:focus, textarea:focus {
         outline: none;
         ring: 2px;
         ring-purple-500;
@@ -98,3 +115,4 @@
     }
 </style>
 {% endblock %}
+
