@@ -22,7 +22,6 @@ def student_signup(request):
                 
                 student = Student(
                     user_ptr=user,
-                    enrollment_year=request.POST.get('enrollment_year', 2024),
                     gpa=0.0,
                     major_id=request.POST.get('major'),
                     funded=request.POST.get('funded', False) == 'on',
