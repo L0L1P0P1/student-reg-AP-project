@@ -51,5 +51,5 @@ class CourseStudentStatus(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     grade = models.FloatField()
     paid = models.BooleanField()
-    passed = models.BooleanField(default=False)
-    canceled = models.BooleanField(default=False)
+    passed = models.BooleanField(default=False)  # pyright: ignore
+    canceled = models.BooleanField(default=False) # pyright: ignore
