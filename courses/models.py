@@ -13,7 +13,7 @@ class Unit(models.Model):
     )
 
 class Semester(models.Model):
-    code_name = models.PositiveSmallIntegerField(primary_key=True)
+    codename = models.PositiveSmallIntegerField(primary_key=True)
     start_date = models.DateField()
     end_date = models.DateField()
     active = models.BooleanField()
