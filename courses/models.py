@@ -12,6 +12,17 @@ class Unit(models.Model):
         related_name='units'
     )
 
+class Semester(models.Model):
+    code_name = models.PositiveSmallIntegerField(primary_key=True)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    active = models.BooleanField()
+
+    def save(self, *args, **kwargs):
+        if self.active:  
+            Semester.objects.exclude(pk=self.pk).update(active=False)  # pyright: ignore
+        super().save(*args, **kwargs)
+
 class MajorUnit(models.Model):
     major = models.ForeignKey('users.Major', on_delete=models.CASCADE)
     unit = models.ForeignKey(Unit, on_delete=models.CASCADE)
@@ -23,15 +34,16 @@ class MajorUnit(models.Model):
 
     state = models.PositiveSmallIntegerField(choices=UnitMajorState.choices) 
 
+class TimeSlots(models.Model):
+    id = models.PositiveSmallIntegerField(primary_key=True)
+    time = models.CharField(255)
+
 class Course(models.Model):
     unit = models.ForeignKey(Unit, null=True, on_delete=models.SET_NULL) 
     instructor = models.ForeignKey(Instructor, null=True, on_delete=models.SET_NULL)
-    term = models.PositiveSmallIntegerField()
+    semester = models.ForeignKey(Semester, on_delete=models.SET_NULL, null=True)
     slots = models.PositiveSmallIntegerField() 
-    active = models.BooleanField()
-
-class TimeSlots(models.Model):
-    time = models.CharField(255)
+    time_slot = models.ManyToManyField(TimeSlots)
 
 class CourseStudentStatus(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
@@ -40,4 +52,3 @@ class CourseStudentStatus(models.Model):
     price = models.PositiveIntegerField()
     paid = models.BooleanField()
     passed = models.BooleanField()
-    time = models.ManyToManyField(TimeSlots)
