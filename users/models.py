@@ -59,8 +59,7 @@ class Instructor(User):
         super().save(*args, **kwargs)
 
 class Student(User):
-    first_semester = models.ForeignKey('courses.Semester', on_delete=models.SET_NULL, null=True)
-    enrollment_year = models.PositiveSmallIntegerField()
+    first_semester = models.ForeignKey("courses.Semester", on_delete=models.SET_NULL, null=True)
     student_id = models.CharField(max_length=15, unique=True, blank=True)
     gpa = models.FloatField()
     major = models.ForeignKey(Major, null=True, blank=True, on_delete=models.SET_NULL)
