@@ -10,7 +10,9 @@ from .forms import (
     AdminCourseCreationForm,
     AdminCourseModificationForm,
     AdminInstructorModificationForm,
-    AdminModificationForm 
+    AdminModificationForm,
+    AdminSemesterCreationForm,
+    AdminSemesterModificationForm
 )
 
 # Student management 
@@ -199,3 +201,38 @@ def admin_modification(request, pk):
         form = AdminStudentModificationForm(instance=admin)
 
     return render(request, "admin/admins/edit.html", {"form": form, "admin": admin})
+
+# Semester management
+@login_required(login_url="/login/")
+def admin_list_all_semesters(request):
+    semesters = Semester.objects.all().order_by('-codename') # pyright: ignore
+    return render(request, "admin/semesters/list.html", {"semesters": semesters})
+
+@login_required(login_url="/login/")
+def admin_semester_creation(request):
+    if request.method == "POST":
+        form = AdminSemesterCreationForm(request.POST)
+        if form.is_valid():
+            try:
+                form.save()
+                return redirect("admin_list_all_semesters")
+            except Exception as e:
+                pass
+    else:
+        form = AdminSemesterCreationForm()
+    return render(request, "admin/semesters/create.html", {"form": form})
+
+@login_required(login_url="/login/")
+def admin_semester_modification(request, codename):
+    semester = get_object_or_404(Semester, codename=codename)
+    if request.method == "POST":
+        form = AdminSemesterModificationForm(request.POST, instance=semester)
+        if form.is_valid():
+            try:
+                form.save()
+                return redirect("admin_list_all_semesters")
+            except Exception as e:
+                pass
+    else:
+        form = AdminSemesterModificationForm(instance=semester)
+    return render(request, "admin/semesters/edit.html", {"form": form, "semester": semester})

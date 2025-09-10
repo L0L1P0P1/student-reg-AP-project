@@ -55,7 +55,7 @@
                                 </div>
                             </div>
                         </a>
-                        
+
                         <a href="{% url 'admin:list_all_instructors' %}" class="border border-green-200 rounded-lg p-4 hover:bg-green-50 transition duration-200">
                             <div class="flex items-center">
                                 <div class="bg-green-100 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
@@ -69,7 +69,7 @@
                                 </div>
                             </div>
                         </a>
-                        
+
                         <a href="#" class="border border-purple-200 rounded-lg p-4 hover:bg-purple-50 transition duration-200">
                             <div class="flex items-center">
                                 <div class="bg-purple-100 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
@@ -84,7 +84,7 @@
                                 </div>
                             </div>
                         </a>
-                        
+
                         <a href="#" class="border border-red-200 rounded-lg p-4 hover:bg-red-50 transition duration-200">
                             <div class="flex items-center">
                                 <div class="bg-red-100 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
@@ -118,7 +118,7 @@
                                 </div>
                             </div>
                         </a>
-                        
+
                         <a href="{% url 'admin:list_all_courses' %}" class="border border-purple-200 rounded-lg p-4 hover:bg-purple-50 transition duration-200">
                             <div class="flex items-center">
                                 <div class="bg-purple-100 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
@@ -132,7 +132,7 @@
                                 </div>
                             </div>
                         </a>
-                        
+
                         <a href="{% url 'admin:admin_unit_creation' %}" class="border border-yellow-200 rounded-lg p-4 hover:bg-yellow-50 transition duration-200">
                             <div class="flex items-center">
                                 <div class="bg-yellow-100 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
@@ -146,7 +146,7 @@
                                 </div>
                             </div>
                         </a>
-                        
+
                         <a href="{% url 'admin:admin_course_creation' %}" class="border border-teal-200 rounded-lg p-4 hover:bg-teal-50 transition duration-200">
                             <div class="flex items-center">
                                 <div class="bg-teal-100 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
@@ -157,6 +157,40 @@
                                 <div>
                                     <h3 class="font-medium text-gray-800">ایجاد درس جدید</h3>
                                     <p class="text-sm text-gray-600">تعریف درس جدید برای ارائه</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Semester Management -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">مدیریت ترم‌ها</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <a href="{% url 'admin:admin_list_all_semesters' %}" class="border border-orange-200 rounded-lg p-4 hover:bg-orange-50 transition duration-200">
+                            <div class="flex items-center">
+                                <div class="bg-orange-100 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium text-gray-800">لیست ترم‌ها</h3>
+                                    <p class="text-sm text-gray-600">مشاهده و مدیریت ترم‌های تحصیلی</p>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="{% url 'admin:admin_semester_creation' %}" class="border border-pink-200 rounded-lg p-4 hover:bg-pink-50 transition duration-200">
+                            <div class="flex items-center">
+                                <div class="bg-pink-100 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-pink-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium text-gray-800">ایجاد ترم جدید</h3>
+                                    <p class="text-sm text-gray-600">تعریف ترم تحصیلی جدید</p>
                                 </div>
                             </div>
                         </a>

@@ -69,9 +69,7 @@ def select_course(request, course_id):
     CourseStudentStatus.objects.create(
         student=student,
         course=course,
-        grade=0,
         paid=False,
-        passed=False,
         canceled=False
     )
 
@@ -117,4 +115,4 @@ def pay_course(request, css_id):
         course_status.save()
         messages.success(request, f"Payment successful for {course_status.course.unit.name}.")
 
-    return redirect('billing_view')  # or program page
+    return redirect('available_courses')  # or program page

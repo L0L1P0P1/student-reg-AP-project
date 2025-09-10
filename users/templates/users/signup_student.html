@@ -23,13 +23,14 @@
                     {% csrf_token %}
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- National ID first -->
                         <div>
-                            <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
-                                نام کاربری *
+                            <label for="{{ form.national_id.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                                کد ملی *
                             </label>
-                            {{ form.username }}
-                            {% if form.username.errors %}
-                                <p class="text-red-500 text-sm mt-1">{{ form.username.errors }}</p>
+                            {{ form.national_id }}
+                            {% if form.national_id.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ form.national_id.errors }}</p>
                             {% endif %}
                         </div>
                         
@@ -63,15 +64,7 @@
                             {% endif %}
                         </div>
                         
-                        <div>
-                            <label for="{{ form.national_id.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
-                                کد ملی *
-                            </label>
-                            {{ form.national_id }}
-                            {% if form.national_id.errors %}
-                                <p class="text-red-500 text-sm mt-1">{{ form.national_id.errors }}</p>
-                            {% endif %}
-                        </div>
+                        <!-- Removed username field -->
                         
                         <div>
                             <label for="{{ form.phone_number.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
@@ -83,15 +76,7 @@
                             {% endif %}
                         </div>
                         
-                        <div>
-                            <label for="{{ form.enrollment_year.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
-                                سال ورود *
-                            </label>
-                            {{ form.enrollment_year }}
-                            {% if form.enrollment_year.errors %}
-                                <p class="text-red-500 text-sm mt-1">{{ form.enrollment_year.errors }}</p>
-                            {% endif %}
-                        </div>
+                        <!-- Removed enrollment_year field -->
                         
                         <div>
                             <label for="{{ form.major.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
@@ -174,3 +159,4 @@
     }
 </style>
 {% endblock %}
+

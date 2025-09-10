@@ -24,6 +24,11 @@ class User(AbstractUser):
     USERNAME_FIELD = 'national_id'
     REQUIRED_FIELDS = ['username']
 
+    def save(self, *args, **kwargs):
+        if not self.username:
+            self.username = self.national_id
+        super().save(*args, **kwargs)
+
 class Admin(User):
     title = models.CharField(max_length=50)
     

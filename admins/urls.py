@@ -24,4 +24,9 @@ urlpatterns = [
     
     # Admin management
     path('admins/<int:pk>/edit/', views.admin_modification, name='admin_modification'),
+
+    # Semester management
+    path('semesters/', views.admin_list_all_semesters, name='admin_list_all_semesters'),
+    path('semesters/create/', views.admin_semester_creation, name='admin_semester_creation'),
+    path('semesters/<int:codename>/edit/', views.admin_semester_modification, name='admin_semester_modification'),
 ]

@@ -74,6 +74,7 @@ def instructor_signup(request):
     
     return render(request, 'users/signup_instructor.html', {'form': form})
 
+'''
 def admin_signup(request):
     """Admin signup form"""
     if request.method == 'POST':
@@ -100,6 +101,7 @@ def admin_signup(request):
         form = SignUpForm()
     
     return render(request, 'users/signup_admin.html', {'form': form})
+'''
 
 @login_required(login_url="/login/")
 def hub(request):
@@ -115,6 +117,3 @@ def hub(request):
         return render(request, 'hub/instructor_hub.html', context)
     if user.role == User.Role.ADMIN:
         return render(request, 'hub/admin_hub.html', context)
-
-
-

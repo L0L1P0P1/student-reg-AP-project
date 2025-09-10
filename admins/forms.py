@@ -1,6 +1,6 @@
 from django import forms
 from users.models import Student, Instructor, Admin
-from courses.models import Unit, Course
+from courses.models import Unit, Course, Semester
 
 
 class AdminStudentModificationForm(forms.ModelForm):
@@ -88,4 +88,24 @@ class AdminModificationForm(forms.ModelForm):
             "email",
             "phone_number",
             "title",
+        ]
+
+class AdminSemesterCreationForm(forms.ModelForm):
+    class Meta:
+        model = Semester
+        fields = [
+            "codename",
+            "start_date",
+            "end_date",
+            "active",
+        ]
+
+class AdminSemesterModificationForm(forms.ModelForm):
+    class Meta:
+        model = Semester
+        fields = [
+            "codename", # Usually, codename shouldn't be changed, but including it for completeness.
+            "start_date",
+            "end_date",
+            "active",
         ]
