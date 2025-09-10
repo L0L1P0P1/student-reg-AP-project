@@ -1,0 +1,114 @@
+<!-- templates/student/scores.html -->
+{% extends 'base.html' %}
+
+{% block title %}کارنامه - پنل دانشجویی{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+    <div class="container mx-auto px-4">
+        <!-- Header -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <div class="bg-indigo-100 w-16 h-16 rounded-full flex items-center justify-center mr-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">
+                            کارنامه
+                        </h1>
+                        <p class="text-gray-600">
+                            نمرات دروس گذرانده شده
+                        </p>
+                    </div>
+                </div>
+                <div class="flex space-x-2">
+                    <a href="{% url 'student_hub' %}" class="bg-red-100 hover:bg-red-200 text-red-700 font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        بازگشت
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scores Table -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">نام درس</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">استاد</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ترم</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">نمره</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">وضعیت</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">پرداخت</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for score in scores %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ score.course.unit.name }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ score.course.instructor.get_full_name }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ score.course.semester.codename }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {% if score.grade > 0 %}
+                                    {{ score.grade }}
+                                {% else %}
+                                    <span class="text-gray-500">ثبت نشده</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {% if score.passed %}
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">قبول</span>
+                                {% elif score.grade > 0 %}
+                                    <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">مردود</span>
+                                {% else %}
+                                    <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs">در حال انجام</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {% if score.paid %}
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">پرداخت شده</span>
+                                {% else %}
+                                    <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">پرداخت نشده</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
+                                هیچ نمره‌ای ثبت نشده است.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- GPA Summary -->
+        <div class="bg-white rounded-xl shadow-md p-6 mt-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">خلاصه وضعیت تحصیلی</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h3 class="text-gray-600 text-sm mb-1">معدل کل</h3>
+                    <p class="text-2xl font-bold text-indigo-600">{{ request.user.student.gpa }}</p>
+                </div>
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h3 class="text-gray-600 text-sm mb-1">تعداد دروس گذرانده شده</h3>
+                    <p class="text-2xl font-bold text-indigo-600">{{ scores|length }}</p>
+                </div>
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h3 class="text-gray-600 text-sm mb-1">تعداد واحدهای گذرانده شده</h3>
+                    <p class="text-2xl font-bold text-indigo-600">85</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

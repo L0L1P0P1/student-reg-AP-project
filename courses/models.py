@@ -49,7 +49,18 @@ class Course(models.Model):
 class CourseStudentStatus(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    grade = models.FloatField()
+    grade = models.FloatField(null=True, blank=True)
     paid = models.BooleanField()
-    passed = models.BooleanField(default=False)  # pyright: ignore
+    passed = models.BooleanField(blank=True, null=True)  # pyright: ignore
     canceled = models.BooleanField(default=False) # pyright: ignore
+
+    def save(self, *args, **kwargs):
+        if self.grade is not None:
+            if self.grade > 20:
+                self.grade = 20
+            if self.grade >= 10:
+                self.passed = True 
+            else:
+                self.passed=False
+        super().save(*args, **kwargs)
+

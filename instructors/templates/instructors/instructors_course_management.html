@@ -1,0 +1,142 @@
+<!-- templates/instructors/instructors_course_management.html -->
+{% extends 'base.html' %}
+
+{% block title %}مدیریت نمرات - {{ course.unit.name }}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 py-8">
+    <div class="container mx-auto px-4">
+        <!-- Header -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mr-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">
+                            مدیریت نمرات
+                        </h1>
+                        <p class="text-gray-600">
+                            {{ course.unit.name }} - ترم {{ course.semester.codename }}
+                        </p>
+                    </div>
+                </div>
+                <a href="{% url 'instructor_courses' %}" class="bg-red-100 hover:bg-red-200 text-red-700 font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    بازگشت
+                </a>
+            </div>
+        </div>
+
+        <!-- Course Info -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h3 class="text-gray-600 text-sm mb-1">نام درس</h3>
+                    <p class="font-medium">{{ course.unit.name }}</p>
+                </div>
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h3 class="text-gray-600 text-sm mb-1">ترم</h3>
+                    <p class="font-medium">{{ course.semester.codename }}</p>
+                </div>
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h3 class="text-gray-600 text-sm mb-1">ظرفیت</h3>
+                    <p class="font-medium">{{ course.capacity }}</p>
+                </div>
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h3 class="text-gray-600 text-sm mb-1">تعداد دانشجویان</h3>
+                    <p class="font-medium">{{ students.count }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Students Table with Form -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <form method="post">
+                {% csrf_token %}
+                {{ formset.management_form }}
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">شماره دانشجویی</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">نام و نام خانوادگی</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">نمره</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">لغو درس</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for form in formset %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ form.instance.student.student_id }}
+                                    {{ form.id }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ form.instance.student.get_full_name }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ form.score }}
+                                    {% if form.score.errors %}
+                                        <p class="text-red-500 text-xs mt-1">{{ form.score.errors }}</p>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ form.canceled }}
+                                    {% if form.canceled.errors %}
+                                        <p class="text-red-500 text-xs mt-1">{{ form.canceled.errors }}</p>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">
+                                    هیچ دانشجویی در این درس ثبت نام نکرده است.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                    <div class="flex justify-end">
+                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-lg transition duration-200">
+                            ذخیره تغییرات
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    input[type="number"], input[type="checkbox"] {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    input[type="number"]:focus {
+        outline: none;
+        ring: 2px;
+        ring-green-500;
+        border-color: #10b981;
+    }
+    
+    input[type="checkbox"] {
+        width: 1.25rem;
+        height: 1.25rem;
+        margin: 0 auto;
+    }
+</style>
+{% endblock %}

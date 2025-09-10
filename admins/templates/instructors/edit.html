@@ -1,0 +1,153 @@
+<!-- templates/admin/instructors/edit.html -->
+{% extends 'base.html' %}
+
+{% block title %}ویرایش استاد - پنل مدیریت{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 py-8">
+    <div class="container mx-auto px-4">
+        <!-- Header -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mr-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">
+                            ویرایش استاد
+                        </h1>
+                        <p class="text-gray-600">
+                            ویرایش اطلاعات {{ instructor.get_full_name }}
+                        </p>
+                    </div>
+                </div>
+                <a href="{% url 'list_all_instructors' %}" class="bg-red-100 hover:bg-red-200 text-red-700 font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    بازگشت
+                </a>
+            </div>
+        </div>
+
+        <!-- Edit Form -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <form method="post">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">نام کاربری</label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <p class="text-red-500 text-xs italic mt-1">{{ form.username.errors }}</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">ایمیل</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <p class="text-red-500 text-xs italic mt-1">{{ form.email.errors }}</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">نام</label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                            <p class="text-red-500 text-xs italic mt-1">{{ form.first_name.errors }}</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">نام خانوادگی</label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}
+                            <p class="text-red-500 text-xs italic mt-1">{{ form.last_name.errors }}</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">شماره تلفن</label>
+                        {{ form.phone_number }}
+                        {% if form.phone_number.errors %}
+                            <p class="text-red-500 text-xs italic mt-1">{{ form.phone_number.errors }}</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">کد ملی</label>
+                        {{ form.national_id }}
+                        {% if form.national_id.errors %}
+                            <p class="text-red-500 text-xs italic mt-1">{{ form.national_id.errors }}</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">تخصص</label>
+                        {{ form.specialty }}
+                        {% if form.specialty.errors %}
+                            <p class="text-red-500 text-xs italic mt-1">{{ form.specialty.errors }}</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">عنوان علمی</label>
+                        {{ form.academic_title }}
+                        {% if form.academic_title.errors %}
+                            <p class="text-red-500 text-xs italic mt-1">{{ form.academic_title.errors }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">بیوگرافی</label>
+                        {{ form.bio }}
+                        {% if form.bio.errors %}
+                            <p class="text-red-500 text-xs italic mt-1">{{ form.bio.errors }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="flex items-center">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">تأیید شده</label>
+                        {{ form.verified }}
+                        {% if form.verified.errors %}
+                            <p class="text-red-500 text-xs italic mt-1">{{ form.verified.errors }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="mt-8 flex justify-end">
+                    <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-6 rounded-lg transition duration-200 mr-2">
+                        ذخیره تغییرات
+                    </button>
+                    <a href="{% url 'list_all_instructors' %}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-lg transition duration-200">
+                        انصراف
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    input[type="text"], input[type="email"], textarea, select {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    input:focus, textarea:focus, select:focus {
+        outline: none;
+        ring: 2px;
+        ring-purple-500;
+        border-color: #8b5cf6;
+    }
+    
+    textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+    
+    input[type="checkbox"] {
+        width: 1.25rem;
+        height: 1.25rem;
+        margin-right: 0.5rem;
+    }
+</style>
+{% endblock %}

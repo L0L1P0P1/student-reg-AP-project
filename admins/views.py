@@ -1,14 +1,23 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from users.models import Instructor, Student, User, Admin 
-from courses.models import Unit, Course, CourseStudentStatus, Semester 
+from courses.models import Unit, Course, Semester
+from .forms import (
+    AdminStudentModificationForm,
+    AdminUnitCreationForm,
+    AdminUnitModificationForm,
+    AdminCourseCreationForm,
+    AdminCourseModificationForm,
+    AdminInstructorModificationForm,
+    AdminModificationForm 
+)
 
-# student management 
+# Student management 
 @login_required(login_url="/login/")
 def list_all_students(request):
     query = request.GET.get('q', '')
-    enrollment_year = request.GET.get('year', '')
+    first_semester = request.GET.get('year', '')
     funded = request.GET.get('funded', '')
     verified = request.GET.get('verified', '')
 
@@ -16,43 +25,74 @@ def list_all_students(request):
 
     if query:
         students = students.filter(
-            Q(username__icontains=query) | #pyright: ignore
-            Q(fist_name__icontains=query) |
+            Q(username__icontains=query) |  # pyright: ignore
+            Q(first_name__icontains=query) | 
             Q(last_name__icontains=query)
-            )
+        )
 
-    if enrollment_year:
-        students = students.filter(enrollment_year=enrollment_year)
+    if first_semester:
+        students = students.filter(first_semester__codename=first_semester)
 
-    if funded:
-        students = students.filter(funded=funded)
+    if funded in ["yes", "no"]:
+        students = students.filter(funded=(funded == "yes"))
 
-    if verified:
-        students = students.filter(verified=verified)
+    if verified in ["yes", "no"]:
+        students = students.filter(verified=(verified == "yes"))
 
-    # return render
+    return render(request, "admin/students/list.html", {"students": students})
+
 
 @login_required(login_url="/login/")
 def admin_student_modification(request, pk):
     student = get_object_or_404(Student, pk=pk)
 
-    # needs a form to do stuff
+    if request.method == "POST":
+        form = AdminStudentModificationForm(request.POST, instance=student)
+        if form.is_valid():
+            form.save()
+            return redirect("list_all_students")
+    else:
+        form = AdminStudentModificationForm(instance=student)
 
-#course and unit management
+    return render(request, "admin/students/edit.html", {"form": form, "student": student})
+
+
+# Unit management 
 @login_required(login_url="/login/")
-def list_all_units(request):
-    pass
+def admin_list_all_units(request):
+    units = Unit.objects.all() # pyright: ignore
+    return render(request, "admin/units/list.html", {"units": units})
+
 
 @login_required(login_url="/login/")
-def unit_creation(request):
-    #needs a form 
-    pass
+def admin_unit_creation(request):
+    if request.method == "POST":
+        form = AdminUnitCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("admin_list_all_units")
+    else:
+        form = AdminUnitCreationForm()
+
+    return render(request, "admin/units/create.html", {"form": form})
+
 
 @login_required(login_url="/login/")
-def unit_modification(request, pk):
-    #needs a form
-    pass
+def admin_unit_modification(request, pk):
+    unit = get_object_or_404(Unit, pk=pk)
 
+    if request.method == "POST":
+        form = AdminUnitModificationForm(request.POST, instance=unit)
+        if form.is_valid():
+            form.save()
+            return redirect("admin_list_all_units")
+    else:
+        form = AdminUnitModificationForm(instance=unit)
+
+    return render(request, "admin/units/edit.html", {"form": form, "unit": unit})
+
+
+# Course management 
 @login_required(login_url="/login/")
 def list_all_courses(request):
     query = request.GET.get('q', '')
@@ -63,10 +103,10 @@ def list_all_courses(request):
 
     if query:
         courses = courses.filter(
-                Q(unit__name__icontains=query) | # pyright: ignore
-                Q(instructor__first_name__icontains=query) |
-                Q(instructor__last_name__icontains=query) 
-            )
+            Q(unit__name__icontains=query) | # pyright: ignore
+            Q(instructor__first_name__icontains=query) |
+            Q(instructor__last_name__icontains=query)
+        )
 
     if active == "yes":
         courses = courses.filter(semester__active=True)
@@ -76,17 +116,38 @@ def list_all_courses(request):
     if semester:
         courses = courses.filter(semester__codename=semester)
 
-@login_required(login_url="/login/")
-def course_creation(request):
-    #needs a form 
-    pass
+    return render(request, "admin/courses/list.html", {"courses": courses})
+
 
 @login_required(login_url="/login/")
-def course_modification(request, pk):
-    # needs a form
-    pass
+def admin_course_creation(request):
+    if request.method == "POST":
+        form = AdminCourseCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("list_all_courses")
+    else:
+        form = AdminCourseCreationForm()
 
-#instructor management
+    return render(request, "admin/courses/create.html", {"form": form})
+
+
+@login_required(login_url="/login/")
+def admin_course_modification(request, pk):
+    course = get_object_or_404(Course, pk=pk)
+
+    if request.method == "POST":
+        form = AdminCourseModificationForm(request.POST, instance=course)
+        if form.is_valid():
+            form.save()
+            return redirect("list_all_courses")
+    else:
+        form = AdminCourseModificationForm(instance=course)
+
+    return render(request, "admin/courses/edit.html", {"form": form, "course": course})
+
+
+# Instructor management 
 @login_required(login_url="/login/")
 def list_all_instructors(request):
     query = request.GET.get('q', '')
@@ -96,24 +157,45 @@ def list_all_instructors(request):
     
     if query:
         instructors = instructors.filter(
-                Q(username__icontaints = query) |  # pyright: ignore
-                Q(first_name__icontaints = query) |
-                Q(last_name__icontaints = query)
-            )
+            Q(username__icontains=query) |  # pyright: ignore
+            Q(first_name__icontains=query) |
+            Q(last_name__icontains=query)
+        )
 
     if verified == "yes":
         instructors = instructors.filter(verified=True)
     elif verified == "no":
         instructors = instructors.filter(verified=False)
 
+    return render(request, "admin/instructors/list.html", {"instructors": instructors})
+
 
 @login_required(login_url="/login/")
 def admin_instructor_modification(request, pk):
-    #needs a form
-    pass
+    instructor = get_object_or_404(Instructor, pk=pk)
 
-#admin management
+    if request.method == "POST":
+        form = AdminInstructorModificationForm(request.POST, instance=instructor)
+        if form.is_valid():
+            form.save()
+            return redirect("list_all_instructors")
+    else:
+        form = AdminInstructorModificationForm(instance=instructor)
+
+    return render(request, "admin/instructors/edit.html", {"form": form, "instructor": instructor})
+
+
+# Admin management 
 @login_required(login_url="/login/")
 def admin_modification(request, pk):
-    # needs a form
-    pass
+    admin = get_object_or_404(Admin, pk=pk)
+
+    if request.method == "POST":
+        form = AdminModificationForm(request.POST, instance=admin)
+        if form.is_valid():
+            form.save()
+            return redirect("admin_list")
+    else:
+        form = AdminStudentModificationForm(instance=admin)
+
+    return render(request, "admin/admins/edit.html", {"form": form, "admin": admin})

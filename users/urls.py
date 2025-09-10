@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from . import views
 
@@ -10,4 +10,7 @@ urlpatterns = [
     path('signup/student/', views.student_signup, name='student_signup'),
     path('signup/instructor/', views.instructor_signup, name='instructor_signup'),
     path('signup/admin/', views.admin_signup, name='admin_signup'),
+    path('admin-panel/', include('your_app_name.urls', namespace='admin')),
+    path('instructor/', include('your_instructor_app_name.urls', namespace='instructor')),
+    path('student/', include('your_student_app_name.urls', namespace='student')),
 ]
