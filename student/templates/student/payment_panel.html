@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>وضعیت تراکنش‌ها</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --danger: #ef4444;
+      --success: #10b981;
+      --gray: #6b7280;
+      --light: #f9fafb;
+      --border: #e5e7eb;
+      --bg: #f8fafc;
+    }
+
+    * {
+      font-family: 'Vazirmatn', Tahoma, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: #1f2937;
+      padding: 2rem 1rem;
+      line-height: 1.8;
+      direction: rtl;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+
+    /* Tab Buttons */
+    .tabs {
+      display: flex;
+      background: var(--light);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 1.25rem 1rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+      color: var(--gray);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .tab-btn:hover {
+      color: var(--primary);
+    }
+
+    .tab-btn.active {
+      color: white;
+    }
+
+    .tab-btn:nth-child(1).active {
+      background: var(--danger);
+    }
+
+    .tab-btn:nth-child(2).active {
+      background: var(--success);
+    }
+
+    /* Tab Content */
+    .tab-content {
+      display: none;
+      padding: 1.5rem;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Transaction Item */
+    .transaction-item {
+      padding: 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .transaction-item:last-child {
+      border-bottom: none;
+    }
+
+    .course-info {
+      font-weight: 600;
+      color: #374151;
+      font-size: 1.1rem;
+    }
+
+    .instructor {
+      font-size: 0.9rem;
+      color: var(--gray);
+      margin-top: 0.25rem;
+    }
+
+    .btn {
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #4338ca;
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #059669;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--gray);
+      font-size: 1.1rem;
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .success-icon {
+      color: var(--success);
+      margin-right: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .transaction-item {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .btn {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+        margin-top: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- TAB BUTTONS -->
+<div class="tabs">
+  <a href="#failed" class="tab-btn {% if not succeeded_transactions %}active{% endif %}" id="failed-tab">
+    <i class="fas fa-exclamation-triangle"></i> تراکنش‌های ناموفق
+  </a>
+  <a href="#succeeded" class="tab-btn {% if succeeded_transactions %}active{% endif %}" id="succeeded-tab">
+    <i class="fas fa-check-circle"></i> تراکنش‌های موفق
+  </a>
+</div>
+
+<!-- FAILED TRANSACTIONS PANEL -->
+<div id="failed" class="tab-content {% if not succeeded_transactions %}active{% endif %}">
+  <ul style="list-style: none; padding: 0; margin: 0;">
+    {% for css in failed_transactions %}
+      <li class="transaction-item">
+        <div>
+          <div class="course-info">{{ css.course.unit.name }}</div>
+          <div class="instructor">استاد: {{ css.course.instructor }}</div>
+        </div>
+        <a href="{% url 'payment_checkout' css.id %}" class="btn btn-primary">
+          <i class="fas fa-credit-card"></i> درگاه پرداخت
+        </a>
+      </li>
+    {% empty %}
+      <div class="empty-state">
+        <i class="fas fa-check-circle" style="color: #10b981;"></i>
+        هیچ تراکنش ناموفقی وجود ندارد 🎉
+      </div>
+    {% endfor %}
+  </ul>
+</div>
+
+<!-- SUCCEEDED TRANSACTIONS PANEL -->
+<div id="succeeded" class="tab-content {% if succeeded_transactions %}active{% endif %}">
+  <ul style="list-style: none; padding: 0; margin: 0;">
+    {% for css in succeeded_transactions %}
+      <li class="transaction-item">
+        <span class="course-info">
+          {{ css.course.unit.name }}
+          <i class="fas fa-check success-icon"></i>
+        </span>
+        <a href="{% url 'available_courses' %}" class="btn btn-success">
+          <i class="fas fa-book"></i> مشاهده دروس
+        </a>
+      </li>
+    {% empty %}
+      <div class="empty-state">
+        هنوز هیچ تراکنش موفقی ثبت نشده است.
+      </div>
+    {% endfor %}
+  </ul>
+</div>

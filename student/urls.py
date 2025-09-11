@@ -13,8 +13,8 @@ urlpatterns = [
     path('scores/', views.check_scores, name='check_scores'),
     
     # Payment
-    path('unpaid-courses/', views.unpaid_courses, name='unpaid_courses'),
-    path('pay-course/<int:css_id>/', views.pay_course, name='pay_course'),
+    path("payments/", views.payment_panel, name="payment_panel"),
+    path("payments/<int:css_id>/", views.payment_panel, name="payment_checkout"),
 
     #weekly-program
     path('weekly-program/', views.student_weekly_program, name='student_weekly_program'),

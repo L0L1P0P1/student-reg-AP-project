@@ -143,31 +143,6 @@ def cancel_course(request, css_id):
     return redirect('student_program')
 
 '''
-@login_required(login_url="login")
-def unpaid_courses(request):
-    """
-    Displays a list of courses the logged-in student has enrolled in
-    but has not yet paid for.
-    """
-    student_profile = request.user.student
-
-    # Get CourseStudentStatus records for this student where paid=False
-    # and the course is in the active semester.
-    unpaid_course_statuses = CourseStudentStatus.objects.filter(
-        student=student_profile,
-        paid=student_profile.funded,
-        course__semester__active=True,
-        canceled=False # Exclude canceled enrollments
-    ).select_related(
-        'course__unit',        # Get unit info (name)
-        'course__instructor__user_ptr', # Get instructor info (name)
-        'course__semester'     # Get semester info
-    )
-
-    return render(request, 'student/unpaid_courses.html', {
-        'student': student_profile,
-        'unpaid_course_statuses': unpaid_course_statuses,
-    })
 
 ## Weekly Program
 @login_required(login_url="login")
@@ -191,17 +166,40 @@ def student_weekly_program(request):
         'enrolled_courses': enrolled_courses,
     })
 
-## Paying for Courses
+  
 @login_required(login_url="login")
-def pay_course(request, css_id):
+def payment_panel(request, css_id=None):
     student = request.user.student
-    course_status = get_object_or_404(CourseStudentStatus, id=css_id, student=student)
 
-    if course_status.paid:
-        messages.info(request, "You have already paid for this course.")
-    else:
-        course_status.paid = True
-        course_status.save()
-        messages.success(request, f"Payment successful for {course_status.course.unit.name}.")
+    # --- Handle a checkout (if css_id provided) ---
+    if css_id:
+        course_status = get_object_or_404(CourseStudentStatus, id=css_id, student=student)
+        if course_status.paid:
+            messages.info(request, "You have already paid for this course.")
+        else:
+            # Simulate payment success (درگاه پرداخت)
+            course_status.paid = True
+            course_status.save()
+            messages.success(request, f"پرداخت موفق برای {course_status.course.unit.name}.")
+        return redirect("payment_panel")  # refresh the page
 
-    return redirect('unpaid_courses')  # or program page
+    # --- Prepare lists ---
+    failed_transactions = CourseStudentStatus.objects.filter(
+        student=student,
+        paid=False,
+        course__semester__active=True,
+        canceled=False
+    ).select_related("course__unit", "course__instructor__user_ptr", "course__semester")
+
+    succeeded_transactions = CourseStudentStatus.objects.filter(
+        student=student,
+        paid=True,
+        course__semester__active=True,
+        canceled=False
+    ).select_related("course__unit", "course__instructor__user_ptr", "course__semester")
+
+    return render(request, "student/payment_panel.html", {
+        "student": student,
+        "failed_transactions": failed_transactions,
+        "succeeded_transactions": succeeded_transactions,
+    })
