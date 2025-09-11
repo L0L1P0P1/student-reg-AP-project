@@ -1,0 +1,110 @@
+<!-- instructors/templates/instructors/instructor_create_attachment.html -->
+{% extends 'base.html' %}
+
+{% block title %}افزودن پیوست - {{ course.unit.name }}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 py-8">
+    <div class="container mx-auto px-4">
+        <!-- Header -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mr-4">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">
+                            افزودن پیوست جدید
+                        </h1>
+                        <p class="text-gray-600">
+                            برای درس: {{ course.unit.name }}
+                        </p>
+                    </div>
+                </div>
+                <a href="{% url 'instructor_courses_attachments' %}" class="bg-red-100 hover:bg-red-200 text-red-700 font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    بازگشت
+                </a>
+            </div>
+        </div>
+
+        <!-- Create Attachment Form -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+            {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                <div class="px-4 py-3 rounded relative {% if message.tags == 'error' %}bg-red-100 border border-red-400 text-red-700{% else %}bg-green-100 border border-green-400 text-green-700{% endif %}" role="alert">
+                    <span class="block sm:inline">{{ message }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data"> <!-- Important: enctype for file uploads -->
+                {% csrf_token %}
+
+                <div class="mb-4">
+                    <label for="attachment_name" class="block text-gray-700 text-sm font-bold mb-2">نام پیوست *</label>
+                    <input type="text" id="attachment_name" name="name"
+                           class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                           value="{{ submitted_name|default:'' }}" required>
+                    <p class="text-gray-500 text-xs mt-1">یک نام توصیفی برای پیوست (مثلاً جزوه هفته اول، اطلاعیه مهم)</p>
+                </div>
+
+                <div class="mb-4">
+                    <label for="attachment_description" class="block text-gray-700 text-sm font-bold mb-2">توضیحات (اختیاری)</label>
+                    <textarea id="attachment_description" name="description"
+                              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                              rows="2">{{ submitted_description|default:'' }}</textarea>
+                </div>
+
+                <!-- File Upload -->
+                <div class="mb-4">
+                    <label for="attachment_file" class="block text-gray-700 text-sm font-bold mb-2">آپلود فایل</label>
+                    <input type="file" id="attachment_file" name="file"
+                           class="w-full text-sm text-gray-500
+                                  file:mr-4 file:py-2 file:px-4
+                                  file:rounded-lg file:border-0
+                                  file:text-sm file:font-semibold
+                                  file:bg-green-50 file:text-green-700
+                                  hover:file:bg-green-100">
+                    <p class="text-gray-500 text-xs mt-1">فایل‌های PDF, DOC, TXT و غیره.</p>
+                </div>
+
+                <!-- OR Divider -->
+                <div class="flex items-center my-4">
+                    <div class="flex-grow border-t border-gray-300"></div>
+                    <span class="flex-shrink mx-4 text-gray-500 text-sm">یا</span>
+                    <div class="flex-grow border-t border-gray-300"></div>
+                </div>
+
+                <!-- Text Content -->
+                <div class="mb-6">
+                    <label for="attachment_text_content" class="block text-gray-700 text-sm font-bold mb-2">محتوای متنی</label>
+                    <textarea id="attachment_text_content" name="text_content"
+                              class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                              rows="6" placeholder="محتوای متنی را اینجا وارد کنید...">{{ submitted_text_content|default:'' }}</textarea>
+                    <p class="text-gray-500 text-xs mt-1">برای اطلاعیه‌های کوتاه یا دستورالعمل‌ها.</p>
+                </div>
+
+                <!-- Hidden course ID (not strictly necessary if using URL pk, but good practice) -->
+                <input type="hidden" name="course_id" value="{{ course.pk }}">
+
+                <div class="flex items-center justify-between">
+                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-lg transition duration-200">
+                        ایجاد پیوست
+                    </button>
+                    <a href="{% url 'instructor_courses_attachments' %}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-lg transition duration-200">
+                        انصراف
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
