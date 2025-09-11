@@ -99,11 +99,6 @@ class Student(User):
         return student_id
 
     def calculate_gpa(self):
-        """
-        Calculates and updates the student's GPA based on passed courses.
-        GPA = (Sum of (grade * unit_size)) / (Sum of unit_size for passed courses)
-        Only considers courses where the student has passed (passed=True) and has a grade.
-        """
         try:
             from courses.models import CourseStudentStatus
             passed_courses_grades = CourseStudentStatus.objects.filter(         # pyright: ignore
