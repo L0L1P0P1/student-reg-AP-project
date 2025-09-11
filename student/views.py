@@ -6,37 +6,35 @@ from courses.models import Course, CourseStudentStatus, MajorUnit, Unit, TimeSlo
 
 @login_required(login_url="login")
 def available_courses(request):
-    student = request.user.student  
-
+    student = request.user.student
     major_units = Unit.objects.filter(majors=student.major) # pyright: ignore
+    available_courses = Course.objects.filter(unit__in=major_units, semester__active=True) #pyright: ignore 
 
-    # Only fetch courses from active semester(s)
-    available_courses = Course.objects.filter(
-        unit__in=major_units,
-        semester__active=True
-    )
+    selected_course_ids = list(CourseStudentStatus.objects.filter( # pyright: ignore 
+        student=student,
+    ).values_list('course_id', flat=True))
+
+    print(selected_course_ids)
 
     return render(request, "student/available_courses.html", {
-        "available_courses": available_courses
+        "available_courses": available_courses,
+        "selected_course_ids": selected_course_ids # Pass the list
     })
 
 @login_required(login_url="login")
 def other_courses(request):
     student = request.user.student
-
-    # IDs of courses the student has already taken
-    taken_courses = CourseStudentStatus.objects.filter(
-        student=student
-    ).values_list("course_id", flat=True)
-
-    # Courses in student's major but not yet taken
-    other_courses = Course.objects.filter(
+    taken_courses = CourseStudentStatus.objects.filter(student=student).values_list("course_id", flat=True)   # pyright: ignore 
+    other_courses = Course.objects.filter( # pyright: ignore 
         unit__majors=student.major,
         semester__active=True
     ).exclude(id__in=taken_courses)
 
+    selected_course_ids = list(taken_courses)
+
     return render(request, "student/other_courses.html", {
-        "other_courses": other_courses
+        "other_courses": other_courses,
+        "selected_course_ids": selected_course_ids 
     })
 
 
