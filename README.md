@@ -1,35 +1,108 @@
 # Student Registration Application (student-reg-ap-project)
 
-This is the student registration web application made as the final project for Guilan CompSci Advanced Programming Course Tutored by Dr. Tabatabaei by Behrad Badeli and Sama Zohari.
+This is the student registration web application developed as the final project for the Guilan University Computer Science Advanced Programming Course, tutored by Dr. Tabatabaei. It was created by Behrad Badeli and Sama Zohari.
 
 ## Features
 
-*   User registration and authentication (Student, Instructor, Admin)
-*   Course listing and selection for students
-*   Course management for instructors
-*   Student and course management for admins
-*   Responsive UI using Tailwind CSS
-
-## Project Structure
-
-The project is organized into several Django apps:
-
-*   `student_registration`: Main project configuration and base views (home, about).
-*   `users`: Handles user models (Custom User, Student, Instructor, Admin), authentication views (login, logout, signup), and basic user management.
-*   `courses`: Manages course data, units, semesters, and student enrollment status.
-*   `student`: Contains views and logic specific to student actions (view available courses, select courses, check scores).
-*   `instructors`: Contains views and logic specific to instructor actions (manage assigned courses).
-*   `admins`: Contains views and logic specific to administrator actions (manage students, units, courses, instructors).
-*   `theme`: Configures and manages static assets (CSS) using `django-tailwind`.
+*   **User Authentication & Roles:** Registration and login for Students, Instructors, and Admins, each with distinct permissions.
+*   **Course Management:**
+    *   **Students:** View available courses, select courses based on prerequisites and schedule.
+    *   **Instructors:** Manage courses assigned to them (potentially including enrollment lists, grades, etc.).
+    *   **Admins:** Create, modify, and delete courses, manage course details (units, prerequisites, instructors, semesters).
+*   **Academic Structure Management (Admin):** Create and manage academic units (e.g., departments), courses, and semesters.
+*   **Student Information (Admin):** View and manage student details, enrollment status.
+*   **Instructor Information (Admin):** View and manage instructor details.
 
 ## Technologies Used
 
-*   **Python**: Primary programming language.
-*   **Django**: High-level Python web framework.
-*   **Django-Tailwind**: Integrates Tailwind CSS for styling.
-*   **Tailwind CSS**: Utility-first CSS framework for rapid UI development.
-*   **SQLite**: Default database (configurable).
-*   **uv**: Ultra-fast Python package installer and resolver (used for setup).
+*   **Backend:** Python 3.12+, Django 5.2.6+
+*   **Frontend:** HTML, Tailwind CSS (via `django-tailwind`), JavaScript (potentially)
+*   **Database:** SQLite (default for Django, likely used here), easily configurable to PostgreSQL, MySQL, etc.
+*   **Package Management:** `uv` (for fast setup and dependency resolution)
+*   **Development Tools:** `django-browser-reload` (for faster development feedback)
+*   **Templating:** Django Templates with Tailwind styling.
+*   **Dependency Management:** `uv.lock` (managed by `uv`)
+
+## Getting Started (Development Setup)
+
+These instructions will get you a copy of the project up and running on your local machine.
+
+### Prerequisites
+
+*   Python 3.12 or higher installed.
+*   `uv` package manager installed (`pip install uv`).
+
+### Installation
+
+1.  **Clone the Repository:**
+    ```bash
+    git clone https://github.com/your-username/student-reg-ap-project.git
+    cd student-reg-ap-project
+    ```
+    *(Note: Replace `your-username` with the actual repository owner if hosted on GitHub/GitLab/etc.)*
+
+2.  **Create a Virtual Environment (using `uv`):**
+    ```bash
+    uv venv
+    # Activate the virtual environment
+    # On Windows:
+    .venv\Scripts\activate
+    # On macOS/Linux:
+    source .venv/bin/activate
+    ```
+
+3.  **Install Dependencies:**
+    ```bash
+    uv sync
+    ```
+    This command reads the project's dependencies from `pyproject.toml` and `uv.lock` and installs them efficiently within the virtual environment.
+
+4.  **Apply Database Migrations:**
+    Create the database schema based on the defined models.
+    ```bash
+    python manage.py makemigrations # (Optional, if you modified models or are setting up fresh)
+    python manage.py migrate
+    ```
+
+5.  **Create a Superuser (Admin):**
+    To access the Django admin interface, create a superuser account.
+    ```bash
+    python manage.py createsuperuser
+    ```
+    Follow the prompts to set a username, email, and password.
+
+6.  **Install and Build Tailwind CSS (django-tailwind setup):**
+    This project uses `django-tailwind` for styling. You may need to initialize Tailwind if not already done:
+    ```bash
+    # Navigate to the theme directory (adjust path if needed)
+    cd theme/static_src
+    npm install # Install Tailwind and dependencies (requires Node.js/npm)
+    cd ../.. # Return to project root
+
+    # Build Tailwind CSS (development mode)
+    python manage.py tailwind start
+    # Or build for production
+    # python manage.py tailwind build
+    ```
+    *(Note: Running `tailwind start` usually starts a process that watches for changes. You might need to run the Django development server in another terminal.)*
+
+7.  **Start the Development Server:**
+    ```bash
+    python manage.py runserver
+    ```
+    Access the application in your web browser at `http://127.0.0.1:8000/`.
+    Access the Django admin interface at `http://127.0.0.1:8000/admin/` using the superuser credentials created earlier.
+
+## Project Structure Overview
+
+*   `student_reg_ap_project/`: Main Django project settings and configuration.
+*   `accounts/`: Manages user authentication, registration, and profile handling (likely includes `User` model extensions).
+*   `courses/`: Core application logic for Units, Courses, Semesters, and potentially student course selections.
+*   `admins/`: Views, forms, and templates specifically for Admin user functionalities (managing courses, units, semesters, users).
+*   `instructors/`: Views, forms, and templates for Instructor user functionalities.
+*   `students/`: Views, forms, and templates for Student user functionalities.
+*   `templates/`: Base templates and shared templates used across the application.
+*   `theme/`: Contains Tailwind CSS configuration and static files (managed by `django-tailwind`).
 
 ## UML Diagrams
 
@@ -55,31 +128,43 @@ classDiagram
         +gpa
         +funded
         +verified
+        +major
+        +first_semester
         +generate_student_id()
     }
 
     class Instructor {
-        # No specific fields beyond User
+        +employee_id
+        +department
+        +office_location
     }
 
     class Admin {
-        # No specific fields beyond User
+        +admin_level
     }
 
     class Major {
         +name
-        +codename
+        +code
+        +description
     }
 
     class Unit {
         +name
+        +code
         +description
-        +unit_size
     }
 
     class Course {
+        +code
+        +name
+        +credit
         +slots
-        +capacity
+        +description
+        +unit
+        +semester
+        +instructor
+        +prerequisites
     }
 
     class Semester {
@@ -87,14 +172,6 @@ classDiagram
         +start_date
         +end_date
         +active
-    }
-
-    class CourseStudentStatus {
-        +grade
-        +passed
-        +paid
-        +canceled
-        +status
     }
 
     User <|-- Student
@@ -109,110 +186,57 @@ classDiagram
 
     Course --> Instructor : instructor
     Course --> Semester : semester
-    Course --> "0..*" CourseStudentStatus : course (ForeignKey)
-
-    Student --> "0..*" CourseStudentStatus : student (ForeignKey)
-    Instructor --> "0..*" Course : courses taught
+    Course --> Unit : unit (ForeignKey)
+    Course --> Course : prerequisites (ManyToMany - Self-referential)
 
 ```
 
-*(Note: Some relationships like TimeSlot and specific form classes are omitted for clarity.)*
+### (Potential) Sequence Diagram (Student Course Selection Example)
 
-## Installation Guide (using `uv`)
+*(This is a simplified example based on inferred functionality)*
 
-These instructions will get you a copy of the project up and running on your local machine.
+```mermaid
+sequenceDiagram
+    participant Student
+    participant System
+    participant Database
 
-### Prerequisites
+    Student->>System: Logs in (authenticated)
+    activate Student
+    activate System
 
-*   **Python 3.12+**: Ensure Python is installed on your system.
-*   **uv**: Install `uv`, a fast Python package installer. Follow the instructions on the [official uv GitHub page](https://github.com/astral-sh/uv) or use `pip install uv`.
-*   **Node.js & npm**: Required for `django-tailwind`. Download and install from [nodejs.org](https://nodejs.org/).
+    Student->>System: Requests available courses (GET /student/courses/)
+    System->>Database: Query Courses for current semester
+    activate Database
+    Database-->>System: Returns course list
+    deactivate Database
+    System-->>Student: Displays course list page
 
-### Steps
+    Student->>System: Selects a course (POST /student/courses/select/)
+    System->>Database: Check prerequisites, slots, schedule conflicts
+    activate Database
+    Database-->>System: Validation result (Success/Failure)
+    deactivate Database
 
-1.  **Clone the Repository:**
-    ```bash
-    git clone <repository_url> # Replace <repository_url> with the actual URL if hosted
-    cd student-reg-ap-project
-    ```
-    *(If this project was provided as a file dump, assume you are already in the project root directory.)*
+    alt Validation Successful
+        System->>Database: Add course to student's selections
+        activate Database
+        Database-->>System: Confirmation
+        deactivate Database
+        System-->>Student: Confirmation message (Course added)
+    else Validation Failed
+        System-->>Student: Error message (Prereq, Full, Conflict)
+    end
 
-2.  **Create a Virtual Environment (using `uv`):**
-    `uv` automatically manages a virtual environment, but you can explicitly create and activate one if preferred.
-    ```bash
-    # uv automatically uses a venv, but you can create one explicitly:
-    uv venv
-    # Activate the virtual environment (command might vary based on OS)
-    # On Linux/macOS:
-    source .venv/bin/activate
-    # On Windows:
-    # .venv\Scripts\Activate.ps1 # (PowerShell) or .venv\Scripts\activate.bat (CMD)
-    ```
+    deactivate System
+    deactivate Student
+```
 
-3.  **Install Dependencies (using `uv`):**
-    Use `uv` to install the project dependencies listed in `pyproject.toml` or `uv.lock`.
-    ```bash
-    uv sync
-    ```
-    This command reads the project's dependencies and installs them efficiently.
+## Contributing
 
-4.  **Apply Database Migrations:**
-    Create the database schema based on the defined models.
-    ```bash
-    python manage.py makemigrations # (Optional, if you modified models or are setting up fresh)
-    python manage.py migrate
-    ```
-
-5.  **Create a Superuser (Admin):**
-    To access the Django admin interface, create a superuser account.
-    ```bash
-    python manage.py createsuperuser
-    ```
-    Follow the prompts to set a username, email, and password.
-
-6.  **Install and Build Tailwind CSS (django-tailwind setup):**
-    The project uses `django-tailwind` with the `theme` app.
-    *   Ensure `NPM_BIN_PATH` in `student_registration/settings.py` points to your `npm` executable. Adjust if necessary (e.g., `/usr/bin/npm`, `C:\\Program Files\\nodejs\\npm.cmd`).
-    *   Navigate to the `theme/static_src` directory.
-        ```bash
-        cd theme/static_src
-        ```
-    *   Install Node.js dependencies required for Tailwind CSS.
-        ```bash
-        npm install
-        ```
-    *   Build the initial Tailwind CSS file.
-        ```bash
-        npm run build
-        ```
-        *(Or use `python manage.py tailwind build` from the project root if `django-tailwind` commands are fully set up)*
-    *   Return to the project root.
-        ```bash
-        cd ../..
-        ```
-
-7.  **(Optional) Run Tailwind CSS in Development Mode:**
-    To automatically rebuild CSS when you change Tailwind classes during development:
-    *   In a separate terminal, navigate to `theme/static_src` and run:
-        ```bash
-        npm run dev
-        ```
-        *(Or use `python manage.py tailwind start` from the project root)*
-
-8.  **Run the Development Server:**
-    Start the Django development server.
-    ```bash
-    python manage.py runserver
-    ```
-
-9.  **Access the Application:**
-    Open your web browser and go to `http://127.0.0.1:8000/` to view the application.
-    *   Visit `http://127.0.0.1:8000/admin/` to access the Django admin interface using the superuser credentials created in step 5.
-    *   Navigate to `/hub/` to access user-specific dashboards after logging in.
-
+Please fork the repository and submit pull requests for any contributions.
 
 ## License
 
-This project is licensed under the MIT License - see the `LICENSE` file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
