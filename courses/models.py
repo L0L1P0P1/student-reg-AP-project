@@ -73,7 +73,7 @@ class CourseStudentStatus(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     grade = models.FloatField(null=True, blank=True)
-    paid = models.BooleanField()
+    paid = models.BooleanField(blank=True)
     passed = models.BooleanField(blank=True, null=True)  # pyright: ignore
     canceled = models.BooleanField(default=False) # pyright: ignore
 
@@ -89,3 +89,62 @@ class CourseStudentStatus(models.Model):
 
         self.student.calculate_gpa()  # pyright: ignore
 
+class CourseAttachment(models.Model):
+
+    ATTACHMENT_TYPE_CHOICES = [
+            ('file', 'File'),
+            ('text', 'Text'),
+            ('both', 'File and Text')
+            ]
+
+    course = models.ForeignKey(
+            'courses.Course',
+            on_delete=models.CASCADE,
+            related_name='attachments'
+            )
+    name = models.CharField(
+            max_length=255,
+            help_text="",
+            )
+    file = models.FileField(
+        upload_to='course_attachments/%Y/%m/%d/', 
+        blank=True, 
+        null=True,
+        help_text="Upload a file (PDF, DOC, etc.)"
+    )
+    text_content = models.TextField(
+        blank=True, 
+        null=True,
+        help_text="Enter text content directly (e.g., announcements, instructions)"
+    )
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    description = models.TextField(
+        blank=True, 
+        help_text="Optional description of the attachment's content."
+    )
+    class Meta:
+        ordering = ['-uploaded_at'] # Show newest attachments first
+        verbose_name = "Course Attachment"
+        verbose_name_plural = "Course Attachments"
+
+    def __str__(self):
+        content_type = "File" if self.file else "Text" if self.text_content else "Empty"
+        return f"{self.name} ({content_type} - {self.course.unit.name if self.course and self.course.unit else 'Unknown Course'})"  # pyright: ignore
+
+    def get_file_name(self):
+        """Helper to get just the filename from the full path."""
+        if self.file:
+            return self.file.name.split('/')[-1]  # pyright: ignore
+        return None
+
+    def get_primary_content_type(self):
+        """
+        Determines the primary content type based on which field has data.
+        Prioritizes 'file' if both are present.
+        """
+        if self.file:
+            return 'file'
+        elif self.text_content:
+            return 'text'
+        else:
+            return 'none'

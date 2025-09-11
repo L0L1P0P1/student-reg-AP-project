@@ -73,7 +73,7 @@ class AdminCourseModificationForm(forms.ModelForm):
 class AdminCSSInlineForm(forms.ModelForm):
     class Meta:
         model = CourseStudentStatus
-        fields = ['student', 'grade', 'paid', 'passed', 'canceled']
+        fields = ['grade', 'paid', 'passed', 'canceled']
         widgets = {
             'grade': forms.NumberInput(attrs={'step': "0.25"}), # Example for decimal grades
         }

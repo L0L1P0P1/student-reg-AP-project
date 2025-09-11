@@ -123,16 +123,14 @@
                                     {{ hidden_field }}
                                 {% endfor %}
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    {% if css_form.instance.pk %}
-                                        {{ css_form.instance.student.get_full_name }} ({{ css_form.instance.student.student_id }})
-                                        <!-- Optionally display student name even if field is disabled/hardcoded -->
-                                    {% else %}
-                                        <!-- If it's a new form (unlikely with extra=0), you might need a way to select student -->
-                                        {{ css_form.student }} <!-- Render the student field -->
-                                    {% endif %}
-                                    {% if css_form.student.errors %}
-                                        <p class="text-red-500 text-xs italic">{{ css_form.student.errors }}</p>
-                                    {% endif %}
+
+
+								{% if css_form.instance.student %}
+									{{ css_form.instance.student.get_full_name }} ({{ css_form.instance.student.student_id }})
+								{% else %}
+									Unknown Student
+								{% endif %}
+
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                     {{ css_form.grade }}
