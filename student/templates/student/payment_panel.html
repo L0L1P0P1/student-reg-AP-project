@@ -1,241 +1,160 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>وضعیت تراکنش‌ها</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
-  <style>
-    :root {
-      --primary: #4f46e5;
-      --danger: #ef4444;
-      --success: #10b981;
-      --gray: #6b7280;
-      --light: #f9fafb;
-      --border: #e5e7eb;
-      --bg: #f8fafc;
-    }
+<!-- templates/student/payment_panel.html -->
+{% extends 'base.html' %}
 
-    * {
-      font-family: 'Vazirmatn', Tahoma, sans-serif;
-    }
+{% block title %}پنل پرداخت - سیستم دانشگاهی{% endblock %}
 
-    body {
-      background-color: var(--bg);
-      color: #1f2937;
-      padding: 2rem 1rem;
-      line-height: 1.8;
-      direction: rtl;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-      overflow: hidden;
-    }
-
-    /* Tab Buttons */
-    .tabs {
-      display: flex;
-      background: var(--light);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .tab-btn {
-      flex: 1;
-      padding: 1.25rem 1rem;
-      font-size: 1.1rem;
-      font-weight: 700;
-      text-align: center;
-      text-decoration: none;
-      color: var(--gray);
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      position: relative;
-    }
-
-    .tab-btn:hover {
-      color: var(--primary);
-    }
-
-    .tab-btn.active {
-      color: white;
-    }
-
-    .tab-btn:nth-child(1).active {
-      background: var(--danger);
-    }
-
-    .tab-btn:nth-child(2).active {
-      background: var(--success);
-    }
-
-    /* Tab Content */
-    .tab-content {
-      display: none;
-      padding: 1.5rem;
-    }
-
-    .tab-content.active {
-      display: block;
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    /* Transaction Item */
-    .transaction-item {
-      padding: 1.25rem;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .transaction-item:last-child {
-      border-bottom: none;
-    }
-
-    .course-info {
-      font-weight: 600;
-      color: #374151;
-      font-size: 1.1rem;
-    }
-
-    .instructor {
-      font-size: 0.9rem;
-      color: var(--gray);
-      margin-top: 0.25rem;
-    }
-
-    .btn {
-      padding: 0.6rem 1.2rem;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.95rem;
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      border: none;
-      cursor: pointer;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: #4338ca;
-    }
-
-    .btn-success {
-      background: var(--success);
-      color: white;
-    }
-
-    .btn-success:hover {
-      background: #059669;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 3rem 1rem;
-      color: var(--gray);
-      font-size: 1.1rem;
-    }
-
-    .empty-state i {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      display: block;
-    }
-
-    .success-icon {
-      color: var(--success);
-      margin-right: 0.5rem;
-    }
-
-    @media (max-width: 768px) {
-      .transaction-item {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .btn {
-        width: 100%;
-        text-align: center;
-        justify-content: center;
-        margin-top: 0.75rem;
-      }
-    }
-  </style>
-</head>
-<body>
-
-  <div class="container">
-
-    <!-- TAB BUTTONS -->
-<div class="tabs">
-  <a href="#failed" class="tab-btn {% if not succeeded_transactions %}active{% endif %}" id="failed-tab">
-    <i class="fas fa-exclamation-triangle"></i> تراکنش‌های ناموفق
-  </a>
-  <a href="#succeeded" class="tab-btn {% if succeeded_transactions %}active{% endif %}" id="succeeded-tab">
-    <i class="fas fa-check-circle"></i> تراکنش‌های موفق
-  </a>
-</div>
-
-<!-- FAILED TRANSACTIONS PANEL -->
-<div id="failed" class="tab-content {% if not succeeded_transactions %}active{% endif %}">
-  <ul style="list-style: none; padding: 0; margin: 0;">
-    {% for css in failed_transactions %}
-      <li class="transaction-item">
-        <div>
-          <div class="course-info">{{ css.course.unit.name }}</div>
-          <div class="instructor">استاد: {{ css.course.instructor }}</div>
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+    <div class="container mx-auto px-4">
+        <!-- Header -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <h1 class="text-2xl font-bold text-gray-800">پنل پرداخت</h1>
+            <p class="text-gray-600 mt-1">مدیریت تراکنش‌های مالی شما</p>
         </div>
-        <a href="{% url 'payment_checkout' css.id %}" class="btn btn-primary">
-          <i class="fas fa-credit-card"></i> درگاه پرداخت
-        </a>
-      </li>
-    {% empty %}
-      <div class="empty-state">
-        <i class="fas fa-check-circle" style="color: #10b981;"></i>
-        هیچ تراکنش ناموفقی وجود ندارد 🎉
-      </div>
-    {% endfor %}
-  </ul>
+
+        <!-- Tabs -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <div class="border-b border-gray-200 mb-6 pb-4">
+                <nav class="flex space-x-6 space-x-reverse">
+                    <!-- Failed Tab -->
+                    <a href="#failed" class="tab-btn group flex items-center font-medium text-sm focus:outline-none transition-all duration-200"
+                       id="failed-tab">
+                        <div class="w-4 h-4 bg-red-500 rounded-sm ml-2"></div>
+                        <span class="group-hover:text-red-700">پرداخت‌های ناموفق</span>
+                    </a>
+
+                    <!-- Succeeded Tab -->
+                    <a href="#succeeded" class="tab-btn group flex items-center font-medium text-sm focus:outline-none transition-all duration-200"
+                       id="succeeded-tab">
+                        <div class="w-4 h-4 bg-green-500 rounded-sm ml-2"></div>
+                        <span class="group-hover:text-green-700">پرداخت‌های موفق</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Tab Panels -->
+            <div id="failed" class="tab-content py-4">
+                {% if failed_transactions %}
+                    <ul class="space-y-4">
+                        {% for css in failed_transactions %}
+                            <li class="border border-gray-200 rounded-lg p-4 bg-red-50">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h3 class="font-bold text-gray-800">{{ css.course.unit.name }}</h3>
+                                        <p class="text-sm text-gray-600 mt-1">استاد: {{ css.course.instructor.get_full_name }}</p>
+                                    </div>
+                                    <a href="{% url 'payment_checkout' css.id %}"
+                                       class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                        </svg>
+                                        پرداخت مجدد
+                                    </a>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="text-center py-12">
+                        <div class="inline-block bg-green-100 p-4 rounded-full mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-medium text-gray-800">فعلاً هیچ تراکنش ناموفقی نیست ✨</h3>
+                        <p class="text-gray-600 mt-2">همه پرداخت‌های شما با موفقیت انجام شده‌اند!</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div id="succeeded" class="tab-content py-4 hidden">
+                {% if succeeded_transactions %}
+                    <ul class="space-y-4">
+                        {% for css in succeeded_transactions %}
+                            <li class="border border-gray-200 rounded-lg p-4 bg-green-50">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h3 class="font-bold text-gray-800 flex items-center">
+                                            {{ css.course.unit.name }}
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </h3>
+                                        <p class="text-sm text-gray-600 mt-1">استاد: {{ css.course.instructor.get_full_name }}</p>
+                                    </div>
+                                    <a href="{% url 'available_courses' %}"
+                                       class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                        </svg>
+                                        مشاهده دروس
+                                    </a>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="text-center py-12">
+                        <div class="inline-block bg-gray-100 p-4 rounded-full mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-medium text-gray-800">هنوز هیچ تراکنش موفقی ثبت نشده است.</h3>
+                        <p class="text-gray-600 mt-2">پس از پرداخت، در این بخش نمایش داده خواهد شد.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- SUCCEEDED TRANSACTIONS PANEL -->
-<div id="succeeded" class="tab-content {% if succeeded_transactions %}active{% endif %}">
-  <ul style="list-style: none; padding: 0; margin: 0;">
-    {% for css in succeeded_transactions %}
-      <li class="transaction-item">
-        <span class="course-info">
-          {{ css.course.unit.name }}
-          <i class="fas fa-check success-icon"></i>
-        </span>
-        <a href="{% url 'available_courses' %}" class="btn btn-success">
-          <i class="fas fa-book"></i> مشاهده دروس
-        </a>
-      </li>
-    {% empty %}
-      <div class="empty-state">
-        هنوز هیچ تراکنش موفقی ثبت نشده است.
-      </div>
-    {% endfor %}
-  </ul>
-</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const failedTab = document.getElementById('failed-tab');
+    const succeededTab = document.getElementById('succeeded-tab');
+    const failedPanel = document.getElementById('failed');
+    const succeededPanel = document.getElementById('succeeded');
+
+    function activateTab(tabName) {
+        // Reset styles
+        failedTab.classList.remove('text-red-700');
+        succeededTab.classList.remove('text-green-700');
+
+        failedPanel.classList.add('hidden');
+        succeededPanel.classList.add('hidden');
+
+        // Activate selected
+        if (tabName === 'failed') {
+            failedTab.classList.add('text-red-700');
+            failedPanel.classList.remove('hidden');
+            window.location.hash = '#failed';
+        } else {
+            succeededTab.classList.add('text-green-700');
+            succeededPanel.classList.remove('hidden');
+            window.location.hash = '#succeeded';
+        }
+    }
+
+    // Click handlers
+    failedTab.addEventListener('click', function(e) {
+        e.preventDefault();
+        activateTab('failed');
+    });
+
+    succeededTab.addEventListener('click', function(e) {
+        e.preventDefault();
+        activateTab('succeeded');
+    });
+
+    // On load: activate based on hash or default to failed
+    const hash = window.location.hash;
+    if (hash === '#succeeded') {
+        activateTab('succeeded');
+    } else {
+        activateTab('failed');
+    }
+});
+</script>
+
+{% endblock %}
