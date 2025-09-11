@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib.auth import views as auth_views
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from . import views
 
 urlpatterns = [
@@ -26,6 +28,7 @@ urlpatterns = [
     path('hub/', include('users.urls'))
 ]
 
-
+if settings.DEBUG:  # <-- Check this condition
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 
 
 ## http://127.0.0.1/login/
