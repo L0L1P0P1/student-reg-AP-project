@@ -8,7 +8,7 @@ from courses.models import Course, CourseStudentStatus
 from .forms import InstructorCSSForm
 
 
-@login_required(login_url="/login/")
+@login_required(login_url="login")
 def instructor_courses(request):
     user = request.user
 
@@ -34,7 +34,7 @@ def instructor_courses(request):
         'current_courses': current_courses
     })
 
-@login_required(login_url='/login/')
+@login_required(login_url='login')
 def instructor_course_management(request, pk):
     course = get_object_or_404(Course, pk=pk, instructor=request.user)
     students = CourseStudentStatus.objects.filter(course=course).select_related("student") # pyright: ignore

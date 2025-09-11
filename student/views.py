@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.db.models import Prefetch, Count, Sum
 from courses.models import Course, CourseStudentStatus, MajorUnit, Unit, TimeSlots
 
-@login_required(login_url="/login/")
+@login_required(login_url="login")
 def available_courses(request):
     student = request.user.student  
 
@@ -20,8 +20,7 @@ def available_courses(request):
         "available_courses": available_courses
     })
 
-
-@login_required(login_url="/login/")
+@login_required(login_url="login")
 def other_courses(request):
     student = request.user.student
 
@@ -41,7 +40,7 @@ def other_courses(request):
     })
 
 
-@login_required(login_url="/login/")
+@login_required(login_url="login")
 def select_course(request, course_id):
     student = request.user.student
     course = get_object_or_404(Course, id=course_id)
@@ -69,7 +68,7 @@ def select_course(request, course_id):
         registered_times = set(css.course.time_slot.all())
         if course_times & registered_times:
             messages.error(request, "Schedule conflict with another course.")
-            return redirect("available_courses")
+            return redirect("student_weekly_program")
 
     # 5. Register student
     CourseStudentStatus.objects.create(
@@ -83,7 +82,7 @@ def select_course(request, course_id):
     return redirect("available_courses")
 
 ## Checking Scores
-@login_required(login_url="/login/")
+@login_required(login_url="login")
 def check_scores(request):
     student = request.user.student
     
@@ -115,7 +114,7 @@ def cancel_course(request, css_id):
     return redirect('student_program')
 
 '''
-@login_required
+@login_required(login_url="login")
 def unpaid_courses(request):
     """
     Displays a list of courses the logged-in student has enrolled in
@@ -142,7 +141,7 @@ def unpaid_courses(request):
     })
 
 ## Weekly Program
-@login_required(login_url="/login/")
+@login_required(login_url="login")
 def student_weekly_program(request):
 
     student_profile = request.user.student
@@ -164,7 +163,7 @@ def student_weekly_program(request):
     })
 
 ## Paying for Courses
-@login_required(login_url="/login/")
+@login_required(login_url="login")
 def pay_course(request, css_id):
     student = request.user.student
     course_status = get_object_or_404(CourseStudentStatus, id=css_id, student=student)
