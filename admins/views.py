@@ -13,19 +13,24 @@ from .forms import (
     AdminSemesterCreationForm,
     AdminSemesterModificationForm
 )
-from django.contrib import messages
-from functools import wraps
 
+from functools import wraps
+from django.shortcuts import render
+from django.contrib import messages
 
 def admin_required(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return redirect("login")  # only for not-logged-in users
-        if not hasattr(request.user, "admin"):
-            messages.error(request, "Access denied: Admins only.")
-            return redirect("home")  # safe page for logged-in non-admins
+            messages.error(request, "برای دسترسی به این بخش، ابتدا وارد حساب کاربری خود شوید.")
+            return render(request, "admin/access_denied.html", {"login_required": True})
+
+        if not request.user.is_staff:
+            messages.error(request, "شما مجوز دسترسی به این بخش را ندارید.")
+            return render(request, "admin/access_denied.html", {"login_required": False})
+
         return view_func(request, *args, **kwargs)
+    
     return _wrapped_view
 
 # Student management 
