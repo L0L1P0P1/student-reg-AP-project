@@ -12,8 +12,20 @@ class Unit(models.Model):
         related_name='units'
     )
 
+    prerequisites = models.ManyToManyField(
+            'self',
+            symmetrical=False,
+            blank=True,
+            related_name='is_prerequisite_for'
+            )
+
     def __str__(self): # pyright: ignore
         return self.name
+
+    def get_prerequisites_display(self):
+        prereq = self.prerequisites.all()  # pyright: ignore
+        if prereq:
+            return '، '.join([p.name for p in prereq]) 
 
 class Semester(models.Model):
     codename = models.PositiveSmallIntegerField(primary_key=True)
