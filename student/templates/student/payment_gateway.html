@@ -8,7 +8,7 @@
     <div class="container mx-auto px-4">
         <!-- Header -->
         <div class="bg-white rounded-xl shadow-md p-6 mb-8 text-center">
-            <h1 class="text-2xl font-bold text-gray-800">درگاه پرداخت</h1>
+            <h1 class="text-2xl font-bold text-gray-800">جهت ثبت نام، مجدداً پرداخت کنید</h1>
             <p class="text-gray-600 mt-2">دوره: <span class="font-medium">{{ course.unit.name }}</span></p>
             <p class="text-sm text-gray-500 mt-1">استاد: {{ course.instructor.get_full_name }}</p>
         </div>
@@ -21,8 +21,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                     </svg>
                 </div>
-                <h2 class="text-xl font-bold text-gray-800">نتیجه پرداخت را شبیه‌سازی کنید</h2>
-                <p class="text-gray-600 mt-2 text-sm">برای تست سیستم، یکی از دکمه‌ها را بزنید.</p>
+                <h2 class="text-xl font-bold text-gray-800">لطفاً یکی از گزینه‌ها را انتخاب کنید</h2>
+                <p class="text-gray-600 mt-2 text-sm"> شبیه‌سازی نتیجه پرداخت</p>
             </div>
 
             <form method="post" class="space-y-4">
@@ -37,13 +37,11 @@
                     پرداخت موفق ✅
                 </button>
 
-                <!-- Failure Button -->
-                <button type="submit" name="payment_result" value="failure"
-                    class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                    پرداخت ناموفق ❌
+                <!-- CANCEL Button (Black with X) -->
+                <button type="button"
+                    onclick="window.location.href='{% url 'hub' %}'"
+                    class="w-full bg-black hover:bg-gray-800 text-black font-bold py-3 px-4 rounded-lg transition duration-200">
+                    انصراف از پرداخت❌
                 </button>
             </form>
 
