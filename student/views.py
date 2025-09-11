@@ -1,14 +1,18 @@
 from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from courses.models import Course, CourseStudentStatus
+from django.db.models import Prefetch, Count, Sum
+from courses.models import Course, CourseStudentStatus, MajorUnit, Unit, TimeSlots
 
-
+@login_required(login_url="/login/")
 def available_courses(request):
     student = request.user.student  
 
+    major_units = Unit.objects.filter(majors=student.major) # pyright: ignore
+
     # Only fetch courses from active semester(s)
     available_courses = Course.objects.filter(
-        # unit__in=student.major.units.all(),
+        unit__in=major_units,
         semester__active=True
     )
 
@@ -17,6 +21,7 @@ def available_courses(request):
     })
 
 
+@login_required(login_url="/login/")
 def other_courses(request):
     student = request.user.student
 
@@ -36,6 +41,7 @@ def other_courses(request):
     })
 
 
+@login_required(login_url="/login/")
 def select_course(request, course_id):
     student = request.user.student
     course = get_object_or_404(Course, id=course_id)
@@ -77,12 +83,20 @@ def select_course(request, course_id):
     return redirect("available_courses")
 
 ## Checking Scores
+@login_required(login_url="/login/")
 def check_scores(request):
     student = request.user.student
+    
     scores = CourseStudentStatus.objects.filter(student=student).select_related('course__unit', 'course__instructor')
 
+    passed_units_size = CourseStudentStatus.objects.filter(
+        student=student,
+        passed=True
+    ).aggregate(total_size=Sum('course__unit__unit_size'))['total_size'] or 0
+
     return render(request, 'student/scores.html', {
-        'scores': scores
+        'scores': scores,
+        'passed_units_size': passed_units_size,
     })
 
 ## Canceling Courses     !LATER!
@@ -101,9 +115,56 @@ def cancel_course(request, css_id):
     return redirect('student_program')
 
 '''
+@login_required
+def unpaid_courses(request):
+    """
+    Displays a list of courses the logged-in student has enrolled in
+    but has not yet paid for.
+    """
+    student_profile = request.user.student
 
+    # Get CourseStudentStatus records for this student where paid=False
+    # and the course is in the active semester.
+    unpaid_course_statuses = CourseStudentStatus.objects.filter(
+        student=student_profile,
+        paid=student_profile.funded,
+        course__semester__active=True,
+        canceled=False # Exclude canceled enrollments
+    ).select_related(
+        'course__unit',        # Get unit info (name)
+        'course__instructor__user_ptr', # Get instructor info (name)
+        'course__semester'     # Get semester info
+    )
+
+    return render(request, 'student/unpaid_courses.html', {
+        'student': student_profile,
+        'unpaid_course_statuses': unpaid_course_statuses,
+    })
+
+## Weekly Program
+@login_required(login_url="/login/")
+def student_weekly_program(request):
+
+    student_profile = request.user.student
+
+    enrolled_courses = CourseStudentStatus.objects.filter(
+        student=student_profile,
+        course__semester__active=True, # Get courses from the active semester
+        canceled=False
+    ).select_related(
+        'course__unit',
+        'course__instructor__user_ptr'
+    ).prefetch_related(
+        Prefetch('course__time_slot', queryset=TimeSlots.objects.all())
+    )
+
+    return render(request, 'student/weekly_program.html', {
+        'student': student_profile,
+        'enrolled_courses': enrolled_courses,
+    })
 
 ## Paying for Courses
+@login_required(login_url="/login/")
 def pay_course(request, css_id):
     student = request.user.student
     course_status = get_object_or_404(CourseStudentStatus, id=css_id, student=student)
@@ -115,4 +176,4 @@ def pay_course(request, css_id):
         course_status.save()
         messages.success(request, f"Payment successful for {course_status.course.unit.name}.")
 
-    return redirect('available_courses')  # or program page
+    return redirect('unpaid_courses')  # or program page
