@@ -8,13 +8,10 @@ from courses.models import Course, CourseStudentStatus, MajorUnit, Unit, TimeSlo
 def available_courses(request):
     student = request.user.student
     major_units = Unit.objects.filter(majors=student.major) # pyright: ignore
-    available_courses = Course.objects.filter(unit__in=major_units, semester__active=True) #pyright: ignore 
-
+    available_courses = Course.objects.filter(unit__in=major_units, semester__active=True) # pyright: ignore
     selected_course_ids = list(CourseStudentStatus.objects.filter( # pyright: ignore 
         student=student,
     ).values_list('course_id', flat=True))
-
-    print(selected_course_ids)
 
     return render(request, "student/available_courses.html", {
         "available_courses": available_courses,
@@ -24,19 +21,17 @@ def available_courses(request):
 @login_required(login_url="login")
 def other_courses(request):
     student = request.user.student
-    taken_courses = CourseStudentStatus.objects.filter(student=student).values_list("course_id", flat=True)   # pyright: ignore 
-    other_courses = Course.objects.filter( # pyright: ignore 
+    taken_courses = CourseStudentStatus.objects.filter(student=student).values_list("course_id", flat=True) # pyright: ignore
+    other_courses = Course.objects.filter(   # pyright: ignore
         unit__majors=student.major,
         semester__active=True
     ).exclude(id__in=taken_courses)
 
-    selected_course_ids = list(taken_courses)
-
+    selected_course_ids = list(taken_courses) 
     return render(request, "student/other_courses.html", {
         "other_courses": other_courses,
-        "selected_course_ids": selected_course_ids 
-    })
-
+        "selected_course_ids": selected_course_ids
+        })
 
 @login_required(login_url="login")
 def select_course(request, course_id):
