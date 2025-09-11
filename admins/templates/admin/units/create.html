@@ -46,7 +46,6 @@
                         {% endif %}
                     </div>
                     <div>
-                        <!-- Changed field name from codename to description -->
                         <label class="block text-gray-700 text-sm font-bold mb-2">توضیحات</label>
                         {{ form.description }}
                         {% if form.description.errors %}
@@ -54,7 +53,6 @@
                         {% endif %}
                     </div>
                     <div>
-                        <!-- Changed field name from units to unit_size -->
                         <label class="block text-gray-700 text-sm font-bold mb-2">اندازه واحد (تعداد واحدها)</label>
                         {{ form.unit_size }}
                         {% if form.unit_size.errors %}
@@ -62,16 +60,26 @@
                         {% endif %}
                     </div>
                     <div>
-                        <!-- Added majors field -->
                         <label class="block text-gray-700 text-sm font-bold mb-2">رشته‌های مرتبط</label>
-                        {{ form.majors }}
+                        {{ form.majors }} <!-- Render the majors multi-select -->
                         {% if form.majors.errors %}
                             <p class="text-red-500 text-xs italic mt-1">{{ form.majors.errors }}</p>
                         {% endif %}
-                        <p class="text-gray-500 text-xs mt-1">رشته‌هایی که این واحد برای آن‌ها ارائه می‌شود (برای انتخاب چند رشته، کلید Ctrl را نگه دارید)</p>
+                        <p class="text-gray-500 text-xs mt-1">برای انتخاب چند رشته، کلید Ctrl (یا Cmd در مک) را نگه دارید.</p>
+                    </div>
+                    <!-- Added Prerequisites Field -->
+                    <div class="md:col-span-2"> <!-- Span both columns on medium screens and up -->
+                        <label class="block text-gray-700 text-sm font-bold mb-2">پیش‌نیازها</label>
+                        {{ form.prerequisites }} <!-- Render the prerequisites multi-select -->
+                        {% if form.prerequisites.errors %}
+                            <p class="text-red-500 text-xs italic mt-1">{{ form.prerequisites.errors }}</p>
+                        {% endif %}
+                        <p class="text-gray-500 text-xs mt-1">برای انتخاب چند واحد پیش‌نیاز، کلید Ctrl (یا Cmd در مک) را نگه دارید.</p>
+                         <!-- Optional: Add context -->
+                        <p class="text-gray-400 text-xs mt-1">فقط واحدهایی که دانشجو باید قبلاً گذرانده باشد را انتخاب کنید.</p>
                     </div>
                 </div>
-                
+
                 <div class="mt-8 flex justify-end">
                     <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-6 rounded-lg transition duration-200 mr-2">
                         ایجاد واحد
@@ -93,17 +101,23 @@
         border-radius: 0.5rem;
         font-size: 0.875rem;
     }
-    
+
     input:focus, textarea:focus, select:focus {
         outline: none;
-        ring: 2px;
-        ring-purple-500;
-        border-color: #8b5cf6;
+        /* Note: ring and border-color might need Tailwind utility classes or direct styles */
+        /* Using standard CSS for ring effect */
+        box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.5); /* ring-purple-500 with opacity */
+        border-color: #8b5cf6; /* border-purple-500 */
     }
-    /* Style the multi-select */
-    select[multiple] {
-        height: auto; /* Allow it to grow */
-        min-height: 80px; /* Set a minimum height */
+
+    /* Improved styling for multi-select fields */
+    /* Apply to any multi-select you want styled this way */
+    select[multiple].admin-multiselect {
+        height: 120px; /* Fixed height */
+        overflow-y: auto; /* Enable vertical scrolling */
+        /* Optional: Add a border or background for distinction */
+        /* background-color: #f9fafb; */
+        /* border: 1px solid #e5e7eb; */
     }
 </style>
 {% endblock %}
