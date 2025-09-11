@@ -26,6 +26,8 @@ class Unit(models.Model):
         prereq = self.prerequisites.all()  # pyright: ignore
         if prereq:
             return '، '.join([p.name for p in prereq]) 
+        else:
+            return "بدون پیش نیاز"
 
 class Semester(models.Model):
     codename = models.PositiveSmallIntegerField(primary_key=True)

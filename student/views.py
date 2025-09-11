@@ -9,29 +9,65 @@ def available_courses(request):
     student = request.user.student
     major_units = Unit.objects.filter(majors=student.major) # pyright: ignore
     available_courses = Course.objects.filter(unit__in=major_units, semester__active=True) # pyright: ignore
-    selected_course_ids = list(CourseStudentStatus.objects.filter( # pyright: ignore 
+    selected_course_ids = list(CourseStudentStatus.objects.filter( # pyright: ignore
         student=student,
     ).values_list('course_id', flat=True))
+    passed_course_statuses = CourseStudentStatus.objects.filter(
+        student=student,
+        passed=True # pyright: ignore
+    ).select_related('course__unit')
+
+    passed_unit_ids = set()
+    for status in passed_course_statuses:
+        if status.course and status.course.unit:
+             passed_unit_ids.add(status.course.unit.id)
+
+    eligible_courses = []
+    for course in available_courses:
+        unit = course.unit
+        if unit:
+            prereq_unit_ids = set(unit.prerequisites.values_list('id', flat=True)) # pyright: ignore
+            if prereq_unit_ids.issubset(passed_unit_ids):
+                eligible_courses.append(course)
 
     return render(request, "student/available_courses.html", {
-        "available_courses": available_courses,
-        "selected_course_ids": selected_course_ids # Pass the list
+        "available_courses": eligible_courses, # Pass only eligible courses
+        "selected_course_ids": selected_course_ids
     })
 
 @login_required(login_url="login")
 def other_courses(request):
     student = request.user.student
     taken_courses = CourseStudentStatus.objects.filter(student=student).values_list("course_id", flat=True) # pyright: ignore
-    other_courses = Course.objects.filter(   # pyright: ignore
+    other_courses_queryset = Course.objects.filter( # pyright: ignore
         unit__majors=student.major,
         semester__active=True
     ).exclude(id__in=taken_courses)
 
+    passed_course_statuses = CourseStudentStatus.objects.filter(   # pyright: ignore
+        student=student,
+        passed=True # pyright: ignore
+    ).select_related('course__unit')
+
+    passed_unit_ids = set()
+    for status in passed_course_statuses:
+        if status.course and status.course.unit:
+             passed_unit_ids.add(status.course.unit.id)
+
+    eligible_other_courses = []
+    for course in other_courses_queryset:
+        unit = course.unit
+        if unit:
+            prereq_unit_ids = set(unit.prerequisites.values_list('id', flat=True)) # pyright: ignore
+            if prereq_unit_ids.issubset(passed_unit_ids):
+                eligible_other_courses.append(course)
+
     selected_course_ids = list(taken_courses) 
+
     return render(request, "student/other_courses.html", {
-        "other_courses": other_courses,
+        "other_courses": eligible_other_courses, # Pass only eligible courses
         "selected_course_ids": selected_course_ids
-        })
+    })
 
 @login_required(login_url="login")
 def select_course(request, course_id):
