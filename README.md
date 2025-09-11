@@ -4,109 +4,80 @@ This is the student registration web application developed as the final project 
 
 ## Features
 
-*   **User Authentication & Roles:** Registration and login for Students, Instructors, and Admins, each with distinct permissions.
-*   **Course Management:**
-    *   **Students:** View available courses, select courses based on prerequisites and schedule.
-    *   **Instructors:** Manage courses assigned to them (potentially including enrollment lists, grades, etc.).
-    *   **Admins:** Create, modify, and delete courses, manage course details (units, prerequisites, instructors, semesters).
-*   **Academic Structure Management (Admin):** Create and manage academic units (e.g., departments), courses, and semesters.
-*   **Student Information (Admin):** View and manage student details, enrollment status.
-*   **Instructor Information (Admin):** View and manage instructor details.
+*   **User Roles:** Distinct interfaces and permissions for Students, Instructors, and Admins.
+*   **Course Management:** Browse available courses, view details, and register for courses.
+*   **Student Registration:** Manage student profiles and registration status.
+*   **Payment Processing:** Integrated payment panel for course fees.
+*   **Admin Panel:** Comprehensive tools for administrators to manage courses, students, instructors, units, and semesters.
+*   **Course Attachments:** Upload and access files or text content related to courses.
 
 ## Technologies Used
 
-*   **Backend:** Python 3.12+, Django 5.2.6+
-*   **Frontend:** HTML, Tailwind CSS (via `django-tailwind`), JavaScript (potentially)
-*   **Database:** SQLite (default for Django, likely used here), easily configurable to PostgreSQL, MySQL, etc.
-*   **Package Management:** `uv` (for fast setup and dependency resolution)
-*   **Development Tools:** `django-browser-reload` (for faster development feedback)
-*   **Templating:** Django Templates with Tailwind styling.
-*   **Dependency Management:** `uv.lock` (managed by `uv`)
+*   **Backend:** Python, Django
+*   **Frontend:** HTML, Tailwind CSS (via `django-tailwind`)
+*   **Database:** (Likely PostgreSQL or SQLite based on Django defaults, specific DB not mentioned in snippet)
+*   **Authentication:** Django's built-in authentication system
 
-## Getting Started (Development Setup)
-
-These instructions will get you a copy of the project up and running on your local machine.
-
-### Prerequisites
-
-*   Python 3.12 or higher installed.
-*   `uv` package manager installed (`pip install uv`).
-
-### Installation
+## Installation & Setup (General Steps)
 
 1.  **Clone the Repository:**
     ```bash
     git clone https://github.com/your-username/student-reg-ap-project.git
     cd student-reg-ap-project
     ```
-    *(Note: Replace `your-username` with the actual repository owner if hosted on GitHub/GitLab/etc.)*
-
-2.  **Create a Virtual Environment (using `uv`):**
+2.  **Create a Virtual Environment (Recommended):**
     ```bash
-    uv venv
-    # Activate the virtual environment
-    # On Windows:
-    .venv\Scripts\activate
-    # On macOS/Linux:
-    source .venv/bin/activate
+    python -m venv venv
+    source venv/bin/activate  # On Windows: venv\Scripts\activate
     ```
-
-3.  **Install Dependencies:**
-    ```bash
-    uv sync
-    ```
-    This command reads the project's dependencies from `pyproject.toml` and `uv.lock` and installs them efficiently within the virtual environment.
-
-4.  **Apply Database Migrations:**
-    Create the database schema based on the defined models.
-    ```bash
-    python manage.py makemigrations # (Optional, if you modified models or are setting up fresh)
-    python manage.py migrate
-    ```
-
-5.  **Create a Superuser (Admin):**
-    To access the Django admin interface, create a superuser account.
+3.  **Install Dependencies (using `poetry` or `pip`):**
+    *   If using `poetry.lock` (preferred):
+        ```bash
+        # Ensure poetry is installed: pip install poetry
+        poetry install
+        ```
+    *   If using `requirements.txt` (if available):
+        ```bash
+        pip install -r requirements.txt
+        ```
+4.  **Database Setup:**
+    *   Apply migrations:
+        ```bash
+        python manage.py migrate
+        ```
+    *   (Optional) Load initial data (fixtures).
+5.  **Create Superuser (Admin):**
     ```bash
     python manage.py createsuperuser
     ```
-    Follow the prompts to set a username, email, and password.
-
-6.  **Install and Build Tailwind CSS (django-tailwind setup):**
-    This project uses `django-tailwind` for styling. You may need to initialize Tailwind if not already done:
-    ```bash
-    # Navigate to the theme directory (adjust path if needed)
-    cd theme/static_src
-    npm install # Install Tailwind and dependencies (requires Node.js/npm)
-    cd ../.. # Return to project root
-
-    # Build Tailwind CSS (development mode)
-    python manage.py tailwind start
-    # Or build for production
-    # python manage.py tailwind build
-    ```
-    *(Note: Running `tailwind start` usually starts a process that watches for changes. You might need to run the Django development server in another terminal.)*
-
-7.  **Start the Development Server:**
+6.  **Run the Development Server:**
     ```bash
     python manage.py runserver
     ```
-    Access the application in your web browser at `http://127.0.0.1:8000/`.
-    Access the Django admin interface at `http://127.0.0.1:8000/admin/` using the superuser credentials created earlier.
+7.  Access the application in your browser (usually `http://127.0.0.1:8000/`).
 
-## Project Structure Overview
+## Project Structure
 
-*   `student_reg_ap_project/`: Main Django project settings and configuration.
-*   `accounts/`: Manages user authentication, registration, and profile handling (likely includes `User` model extensions).
-*   `courses/`: Core application logic for Units, Courses, Semesters, and potentially student course selections.
-*   `admins/`: Views, forms, and templates specifically for Admin user functionalities (managing courses, units, semesters, users).
-*   `instructors/`: Views, forms, and templates for Instructor user functionalities.
-*   `students/`: Views, forms, and templates for Student user functionalities.
-*   `templates/`: Base templates and shared templates used across the application.
-*   `theme/`: Contains Tailwind CSS configuration and static files (managed by `django-tailwind`).
+```
+student-reg-ap-project/
+├── admins/           # Admin-specific views, URLs, forms
+├── courses/          # Course, Unit, Semester models, views, URLs, forms
+├── student_registration/ # Core project settings, main URLs, views
+├── templates/        # Base and shared templates
+├── theme/            # Tailwind CSS configuration and static files
+├── users/            # User models (Student, Instructor, Admin), views, URLs, forms
+├── manage.py         # Django management script
+├── pyproject.toml    # Poetry dependency management
+├── poetry.lock       # Locked Poetry dependencies
+├── README.md         # This file
+└── ...               # Other standard Django files/folders
+```
 
 ## UML Diagrams
 
 ### Class Diagram
+
+This diagram illustrates the core entities and their relationships within the application.
 
 ```mermaid
 classDiagram
@@ -153,47 +124,59 @@ classDiagram
         +name
         +code
         +description
+        +unit_size
     }
 
     class Course {
-        +code
-        +name
-        +credit
+        +id
         +slots
-        +description
-        +unit
-        +semester
-        +instructor
-        +prerequisites
+        +price
     }
 
     class Semester {
         +codename
         +start_date
         +end_date
-        +active
+    }
+
+    class TimeSlots {
+        +id
+        +time
+    }
+
+    class CourseStudentStatus {
+        +id
+        +grade
+        +paid
+        +passed
+        +registered_at
+    }
+
+    class CourseAttachment {
+        +id
+        +name
+        +file
+        +text_content
+        +description
+        +uploaded_at
     }
 
     User <|-- Student
     User <|-- Instructor
     User <|-- Admin
-
-    Student --> Major : major
+    Student --> Major
     Student --> Semester : first_semester
-
-    Unit --> Major : majors (ManyToMany)
-    Unit --> Course : unit (ForeignKey)
-
-    Course --> Instructor : instructor
-    Course --> Semester : semester
-    Course --> Unit : unit (ForeignKey)
-    Course --> Course : prerequisites (ManyToMany - Self-referential)
-
+    Course --> Unit
+    Course --> Semester
+    Course --> TimeSlots
+    Course --> CourseStudentStatus
+    CourseStudentStatus --> Student
+    Course --> CourseAttachment
 ```
 
-### (Potential) Sequence Diagram (Student Course Selection Example)
+### Sequence Diagram (Course Selection)
 
-*(This is a simplified example based on inferred functionality)*
+This diagram shows the interaction flow when a student selects a course.
 
 ```mermaid
 sequenceDiagram
