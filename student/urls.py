@@ -19,4 +19,8 @@ urlpatterns = [
 
     #weekly-program
     path('weekly-program/', views.student_weekly_program, name='student_weekly_program'),
+
+    # Attachments
+    path('courses/<int:course_id>/attachments/', views.student_course_attachments, name='student_course_attachments'),
+    path('course-attachments/', views.student_course_attachments_list, name='student_course_attachments_list'),
 ]

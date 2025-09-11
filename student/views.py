@@ -208,7 +208,52 @@ def payment_panel(request, css_id=None):
         "succeeded_transactions": succeeded_transactions,
     })
 
+@login_required(login_url="login")
+def student_course_attachments_list(request):
+    """
+    Displays a list of courses the student is enrolled in,
+    allowing them to access attachments for each course.
+    """
+    student = request.user.student
 
+    # Get all CourseStudentStatus entries for the student in the active semester
+    # Select related Course and Unit for efficiency
+    enrolled_course_statuses = CourseStudentStatus.objects.filter(
+        student=student,
+        course__semester__active=True # pyright: ignore
+    ).select_related('course__unit', 'course__semester')
+
+    # Optional: Annotate with attachment count for display
+    # enrolled_course_statuses = enrolled_course_statuses.annotate(
+    #     attachment_count=Count('course__attachments')
+    # )
+
+    return render(request, 'student/course_attachments_list.html', {
+        'enrolled_course_statuses': enrolled_course_statuses,
+    })
+
+@login_required(login_url="login")
+def student_course_attachments(request, course_id):
+    """
+    Displays attachments for a specific course that the student is enrolled in.
+    """
+    student = request.user.student
+
+    css = get_object_or_404(
+        CourseStudentStatus,
+        student=student,
+        course_id=course_id # pyright: ignore
+    )
+
+    course = css.course
+
+    attachments = course.attachments.all() 
+
+    return render(request, 'student/course_attachments.html', {
+        'course': course,
+        'attachments': attachments,
+        'css': css 
+    })
 
 from django.utils import timezone
 
