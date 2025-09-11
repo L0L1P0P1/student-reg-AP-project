@@ -1,4 +1,3 @@
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from users.models import Instructor, Student, User, Admin 
@@ -14,21 +13,27 @@ from .forms import (
     AdminSemesterCreationForm,
     AdminSemesterModificationForm
 )
-from django.contrib import messages
-from functools import wraps
 
+from functools import wraps
+from django.shortcuts import render
+from django.contrib import messages
 
 def admin_required(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
-        if not request.user.is_authenticated or not hasattr(request.user, "admin"):
-            messages.error(request, "Access denied: Admins only.")
-            return redirect("home")  
+        if not request.user.is_authenticated:
+            messages.error(request, "برای دسترسی به این بخش، ابتدا وارد حساب کاربری خود شوید.")
+            return render(request, "admin/access_denied.html", {"login_required": True})
+
+        if not request.user.is_staff:
+            messages.error(request, "شما مجوز دسترسی به این بخش را ندارید.")
+            return render(request, "admin/access_denied.html", {"login_required": False})
+
         return view_func(request, *args, **kwargs)
+    
     return _wrapped_view
 
 # Student management 
-@login_required(login_url="/login/")
 @admin_required
 def list_all_students(request):
     query = request.GET.get('q', '')
@@ -56,8 +61,6 @@ def list_all_students(request):
 
     return render(request, "admin/students/list.html", {"students": students})
 
-
-@login_required(login_url="/login/")
 @admin_required
 def admin_student_modification(request, pk):
     student = get_object_or_404(Student, pk=pk)
@@ -74,14 +77,12 @@ def admin_student_modification(request, pk):
 
 
 # Unit management 
-@login_required(login_url="/login/")
 @admin_required
 def admin_list_all_units(request):
     units = Unit.objects.all() # pyright: ignore
     return render(request, "admin/units/list.html", {"units": units})
 
 
-@login_required(login_url="/login/")
 @admin_required
 def admin_unit_creation(request):
     if request.method == "POST":
@@ -95,7 +96,6 @@ def admin_unit_creation(request):
     return render(request, "admin/units/create.html", {"form": form})
 
 
-@login_required(login_url="/login/")
 @admin_required
 def admin_unit_modification(request, pk):
     unit = get_object_or_404(Unit, pk=pk)
@@ -112,7 +112,6 @@ def admin_unit_modification(request, pk):
 
 
 # Course management 
-@login_required(login_url="/login/")
 @admin_required
 def list_all_courses(request):
     query = request.GET.get('q', '')
@@ -138,8 +137,6 @@ def list_all_courses(request):
 
     return render(request, "admin/courses/list.html", {"courses": courses})
 
-
-@login_required(login_url="/login/")
 @admin_required
 def admin_course_creation(request):
     if request.method == "POST":
@@ -152,8 +149,6 @@ def admin_course_creation(request):
 
     return render(request, "admin/courses/create.html", {"form": form})
 
-
-@login_required(login_url="/login/")
 @admin_required
 def admin_course_modification(request, pk):
     course = get_object_or_404(Course, pk=pk)
@@ -170,7 +165,6 @@ def admin_course_modification(request, pk):
 
 
 # Instructor management 
-@login_required(login_url="/login/")
 @admin_required
 def list_all_instructors(request):
     query = request.GET.get('q', '')
@@ -193,7 +187,6 @@ def list_all_instructors(request):
     return render(request, "admin/instructors/list.html", {"instructors": instructors})
 
 
-@login_required(login_url="/login/")
 @admin_required
 def admin_instructor_modification(request, pk):
     instructor = get_object_or_404(Instructor, pk=pk)
@@ -210,7 +203,6 @@ def admin_instructor_modification(request, pk):
 
 
 # Admin management 
-@login_required(login_url="/login/")
 @admin_required
 def admin_modification(request, pk):
     admin = get_object_or_404(Admin, pk=pk)
@@ -226,13 +218,11 @@ def admin_modification(request, pk):
     return render(request, "admin/admins/edit.html", {"form": form, "admin": admin})
 
 # Semester management
-@login_required(login_url="/login/")
 @admin_required
 def admin_list_all_semesters(request):
     semesters = Semester.objects.all().order_by('-codename') # pyright: ignore
     return render(request, "admin/semesters/list.html", {"semesters": semesters})
 
-@login_required(login_url="/login/")
 @admin_required
 def admin_semester_creation(request):
     if request.method == "POST":
@@ -247,7 +237,6 @@ def admin_semester_creation(request):
         form = AdminSemesterCreationForm()
     return render(request, "admin/semesters/create.html", {"form": form})
 
-@login_required(login_url="/login/")
 @admin_required
 def admin_semester_modification(request, codename):
     semester = get_object_or_404(Semester, codename=codename)
