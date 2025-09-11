@@ -29,6 +29,9 @@ class User(AbstractUser):
             self.username = self.national_id
         super().save(*args, **kwargs)
 
+    def __str__(self):
+        return str(self.first_name + " " + self.last_name) # pyright: ignore
+
 class Admin(User):
     title = models.CharField(max_length=50)
     

@@ -1,14 +1,17 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
-from courses.models import Course, CourseStudentStatus
+from django.db.models import Prefetch
+from courses.models import Course, CourseStudentStatus, MajorUnit, Unit, TimeSlots
 
 
 def available_courses(request):
     student = request.user.student  
 
+    major_units = Unit.objects.filter(majors=student.major) # pyright: ignore
+
     # Only fetch courses from active semester(s)
     available_courses = Course.objects.filter(
-        # unit__in=student.major.units.all(),
+        unit__in=major_units,
         semester__active=True
     )
 
@@ -102,6 +105,25 @@ def cancel_course(request, css_id):
 
 '''
 
+def student_weekly_program(request):
+
+    student_profile = request.user.student
+
+    enrolled_courses = CourseStudentStatus.objects.filter(
+        student=student_profile,
+        course__semester__active=True, # Get courses from the active semester
+        canceled=False
+    ).select_related(
+        'course__unit',
+        'course__instructor__user_ptr'
+    ).prefetch_related(
+        Prefetch('course__time_slot', queryset=TimeSlots.objects.all())
+    )
+
+    return render(request, 'student/weekly_program.html', {
+        'student': student_profile,
+        'enrolled_courses': enrolled_courses,
+    })
 
 ## Paying for Courses
 def pay_course(request, css_id):

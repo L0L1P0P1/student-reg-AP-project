@@ -12,6 +12,9 @@ class Unit(models.Model):
         related_name='units'
     )
 
+    def __str__(self): # pyright: ignore
+        return self.name
+
 class Semester(models.Model):
     codename = models.PositiveSmallIntegerField(primary_key=True)
     start_date = models.DateField()
@@ -22,6 +25,9 @@ class Semester(models.Model):
         if self.active:  
             Semester.objects.exclude(pk=self.pk).update(active=False)  # pyright: ignore
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return str(self.codename)
 
 class MajorUnit(models.Model):
     major = models.ForeignKey('users.Major', on_delete=models.CASCADE)
@@ -37,6 +43,9 @@ class MajorUnit(models.Model):
 class TimeSlots(models.Model):
     id = models.PositiveSmallIntegerField(primary_key=True)
     time = models.CharField(255)
+
+    def __str__(self):
+        return str(self.time)
 
 class Course(models.Model):
     unit = models.ForeignKey(Unit, null=True, on_delete=models.SET_NULL) 

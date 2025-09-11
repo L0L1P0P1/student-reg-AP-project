@@ -14,4 +14,7 @@ urlpatterns = [
     
     # Payment
     path('pay-course/<int:css_id>/', views.pay_course, name='pay_course'),
+
+    #weekly-program
+    path('weekly-program/', views.student_weekly_program, name='student_weekly_program'),
 ]
