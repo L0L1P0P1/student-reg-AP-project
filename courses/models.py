@@ -76,6 +76,7 @@ class CourseStudentStatus(models.Model):
     paid = models.BooleanField(blank=True)
     passed = models.BooleanField(blank=True, null=True)  # pyright: ignore
     canceled = models.BooleanField(default=False) # pyright: ignore
+    registered_at = models.DateTimeField(null=True, blank=True, verbose_name="تاریخ ثبت‌نام")
 
     def save(self, *args, **kwargs):
         if self.grade is not None:

@@ -17,7 +17,7 @@ from .forms import (
 )
 
 from functools import wraps
-from django.shortcuts import render
+from django.shortcuts import render 
 from django.contrib import messages
 
 def admin_required(view_func):
