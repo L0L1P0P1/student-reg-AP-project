@@ -20,7 +20,7 @@
                             ویرایش درس
                         </h1>
                         <p class="text-gray-600">
-                            ویرایش اطلاعات {{ course.unit.name }}
+                            ویرایش اطلاعات {{ course.unit.name }} <!-- Assuming 'course' context is passed -->
                         </p>
                     </div>
                 </div>
@@ -37,9 +37,12 @@
         <div class="bg-white rounded-xl shadow-md p-6">
             <form method="post">
                 {% csrf_token %}
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- Course Details Section -->
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">جزئیات درس</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-2">واحد درسی</label>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">واحد</label>
                         {{ form.unit }}
                         {% if form.unit.errors %}
                             <p class="text-red-500 text-xs italic mt-1">{{ form.unit.errors }}</p>
@@ -60,31 +63,120 @@
                         {% endif %}
                     </div>
                     <div>
-                        <!-- Changed field name from capacity to slots -->
-                        <label class="block text-gray-700 text-sm font-bold mb-2">ظرفیت (تعداد اسلات‌ها)</label>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">ظرفیت</label>
                         {{ form.slots }}
                         {% if form.slots.errors %}
                             <p class="text-red-500 text-xs italic mt-1">{{ form.slots.errors }}</p>
                         {% endif %}
                     </div>
-                    <div>
-                        <!-- Added time_slot field -->
-                        <label class="block text-gray-700 text-sm font-bold mb-2">اسلات زمانی</label>
+                    <div class="md:col-span-2">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">بازه‌های زمانی</label>
                         {{ form.time_slot }}
                         {% if form.time_slot.errors %}
                             <p class="text-red-500 text-xs italic mt-1">{{ form.time_slot.errors }}</p>
                         {% endif %}
+                        <p class="text-gray-500 text-xs mt-1">برای انتخاب چند بازه، کلید Ctrl (یا Cmd در مک) را نگه دارید.</p>
                     </div>
                     <div>
-                        <!-- Added price field -->
-                        <label class="block text-gray-700 text-sm font-bold mb-2">قیمت (تومان)</label>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">قیمت</label>
                         {{ form.price }}
                         {% if form.price.errors %}
                             <p class="text-red-500 text-xs italic mt-1">{{ form.price.errors }}</p>
                         {% endif %}
                     </div>
                 </div>
-                
+
+                <!-- CourseStudentStatus Section -->
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">وضعیت دانشجویان</h2>
+                <!-- Render the formset's management form - CRITICAL -->
+                {{ css_formset.management_form }}
+
+                {% if css_formset.non_form_errors %}
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                        <strong class="font-bold">خطاها:</strong>
+                        <ul class="list-disc list-inside">
+                        {% for error in css_formset.non_form_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <!-- Hidden fields for ID and DELETE are usually handled by the form -->
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">دانشجو</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">نمره</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">پرداخت شده</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">قبول شده</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">لغو شده</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">حذف</th> <!-- For deletion -->
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for css_form in css_formset %}
+                            <tr>
+                                <!-- Render hidden fields (ID, DELETE checkbox if applicable) -->
+                                {% for hidden_field in css_form.hidden_fields %}
+                                    {{ hidden_field }}
+                                {% endfor %}
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+
+
+								{% if css_form.instance.student %}
+									{{ css_form.instance.student.get_full_name }} ({{ css_form.instance.student.student_id }})
+								{% else %}
+									Unknown Student
+								{% endif %}
+
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ css_form.grade }}
+                                    {% if css_form.grade.errors %}
+                                        <p class="text-red-500 text-xs italic">{{ css_form.grade.errors }}</p>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ css_form.paid }}
+                                    {% if css_form.paid.errors %}
+                                        <p class="text-red-500 text-xs italic">{{ css_form.paid.errors }}</p>
+                                    {% endif %}
+                                </td>
+                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ css_form.passed }}
+                                    {% if css_form.passed.errors %}
+                                        <p class="text-red-500 text-xs italic">{{ css_form.passed.errors }}</p>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ css_form.canceled }}
+                                    {% if css_form.canceled.errors %}
+                                        <p class="text-red-500 text-xs italic">{{ css_form.canceled.errors }}</p>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {% if css_form.instance.pk %} <!-- Only show delete for existing instances -->
+                                        {{ css_form.DELETE }} <!-- Render the delete checkbox -->
+                                        {% if css_form.DELETE.errors %}
+                                            <p class="text-red-500 text-xs italic">{{ css_form.DELETE.errors }}</p>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
+                                    هیچ دانشجویی در این درس ثبت نام نکرده است.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <!-- End CourseStudentStatus Section -->
+
                 <div class="mt-8 flex justify-end">
                     <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-6 rounded-lg transition duration-200 mr-2">
                         ذخیره تغییرات
@@ -99,21 +191,29 @@
 </div>
 
 <style>
-    input[type="text"], input[type="number"], select, textarea {
+    /* Basic styling for form elements - adjust as needed */
+    input[type="text"], input[type="number"], input[type="email"], input[type="password"], select, textarea {
         width: 100%;
         padding: 0.5rem;
         border: 1px solid #d1d5db;
         border-radius: 0.5rem;
         font-size: 0.875rem;
     }
-    
-    input:focus, select:focus, textarea:focus {
+
+    input[type="checkbox"] {
+        /* Style checkboxes if needed */
+        transform: scale(1.2); /* Example scaling */
+    }
+
+    input:focus, textarea:focus, select:focus {
         outline: none;
-        /* Note: 'ring' is a Tailwind class. Standard CSS uses box-shadow */
-        /* ring: 2px; */
-        /* ring-purple-500; */
-        box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2); /* Equivalent to Tailwind ring */
-        border-color: #8b5cf6;
+        box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.5); /* ring-purple-500 with opacity */
+        border-color: #8b5cf6; /* border-purple-500 */
+    }
+
+    select[multiple].admin-multiselect {
+        height: 120px;
+        overflow-y: auto;
     }
 </style>
 {% endblock %}

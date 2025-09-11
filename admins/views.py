@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
-from users.models import Instructor, Student, User, Admin 
+from django.db import transaction
+from users.models import Instructor, Student, Admin 
 from courses.models import Unit, Course, Semester
 from .forms import (
     AdminStudentModificationForm,
@@ -8,6 +9,7 @@ from .forms import (
     AdminUnitModificationForm,
     AdminCourseCreationForm,
     AdminCourseModificationForm,
+    AdminCSSInlineFormSet,
     AdminInstructorModificationForm,
     AdminModificationForm,
     AdminSemesterCreationForm,
@@ -80,16 +82,26 @@ def admin_student_modification(request, pk):
 @admin_required
 def admin_list_all_units(request):
     query = request.GET.get('q', '')
+    prereq_query = request.GET.get('prereq_q', '')
     
     units = Unit.objects.all() # pyright: ignore
 
     if query:
         units = units.filter(
                 Q(name__icontains=query) |
-                Q(description__icontains=query)
+                Q(description__icontains=query) 
                 )
 
-    return render(request, "admin/units/list.html", {"units": units})
+    if prereq_query:
+        units = units.filter(
+            prerequisites__name__icontains=prereq_query
+        ).distinct()
+
+    return render(request, "admin/units/list.html", {
+        "units": units,
+        "query": query,
+        "prereq_query": prereq_query
+        })
 
 
 @admin_required
@@ -161,16 +173,47 @@ def admin_course_creation(request):
 @admin_required
 def admin_course_modification(request, pk):
     course = get_object_or_404(Course, pk=pk)
-
+    
+    # Handle POST request
     if request.method == "POST":
-        form = AdminCourseModificationForm(request.POST, instance=course)
-        if form.is_valid():
-            form.save()
-            return redirect("list_all_courses")
+        # Create instances of both forms
+        course_form = AdminCourseModificationForm(request.POST, instance=course)
+        # Create the formset instance, bound to the POST data and the specific course instance
+        css_formset = AdminCSSInlineFormSet(request.POST, instance=course)
+        
+        # Validate both forms
+        if course_form.is_valid() and css_formset.is_valid():
+            try:
+                # Use transaction.atomic to ensure data consistency.
+                # If anything fails, the whole operation is rolled back.
+                with transaction.atomic():
+                    # Save the course instance
+                    updated_course = course_form.save()
+                    
+                    # Save the formset (this saves/deletes the related CourseStudentStatus instances)
+                    css_formset.save()
+                    
+                messages.success(request, f"Course '{updated_course.unit.name}' and its student statuses updated successfully.")
+                return redirect("list_all_courses") # Adjust redirect URL name if needed
+            except Exception as e:
+                # Handle potential errors during save (e.g., database issues)
+                messages.error(request, f"An error occurred while saving: {e}")
+                # Re-render the form with the current data and errors
+                # The forms are already bound and contain errors, so they will display correctly
+        else:
+            # If either form or formset is invalid, display errors
+            # The forms are already bound, so errors will be shown
+            messages.error(request, "Please correct the errors below.")
     else:
-        form = AdminCourseModificationForm(instance=course)
-
-    return render(request, "admin/courses/edit.html", {"form": form, "course": course})
+        course_form = AdminCourseModificationForm(instance=course)
+        css_formset = AdminCSSInlineFormSet(instance=course)
+    
+    # Render the template with both the course form and the formset
+    return render(request, "admin/courses/edit.html", {
+        "form": course_form,      # Main course form
+        "css_formset": css_formset, # CourseStudentStatus formset
+        "course": course          # Pass the course object for context if needed
+    })
 
 
 # Instructor management 
