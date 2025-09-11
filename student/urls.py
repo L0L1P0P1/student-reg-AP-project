@@ -15,6 +15,7 @@ urlpatterns = [
     # Payment
     path("payments/", views.payment_panel, name="payment_panel"),
     path("payments/<int:css_id>/", views.payment_panel, name="payment_checkout"),
+    path('payment/gateway/<int:css_id>/', views.payment_gateway, name='payment_gateway'),
 
     #weekly-program
     path('weekly-program/', views.student_weekly_program, name='student_weekly_program'),
