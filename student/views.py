@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Prefetch, Count, Sum
 from courses.models import Course, CourseStudentStatus, MajorUnit, Unit, TimeSlots
+from django.core.exceptions import ObjectDoesNotExist
 
 @login_required(login_url="login")
 def available_courses(request):
@@ -166,11 +167,14 @@ def student_weekly_program(request):
         'enrolled_courses': enrolled_courses,
     })
 
-  
+
 @login_required(login_url="login")
 def payment_panel(request, css_id=None):
-    student = request.user.student
-
+    try:
+        student = request.user.student
+    except ObjectDoesNotExist:
+        messages.error(request, "⚠️ شما به عنوان دانشجو ثبت‌نام نشده‌اید. لطفاً ابتدا پروفایل دانشجویی خود را تکمیل کنید.")
+        return redirect("hub")
     # --- Handle a checkout (if css_id provided) ---
     if css_id:
         course_status = get_object_or_404(CourseStudentStatus, id=css_id, student=student)
@@ -202,4 +206,60 @@ def payment_panel(request, css_id=None):
         "student": student,
         "failed_transactions": failed_transactions,
         "succeeded_transactions": succeeded_transactions,
+    })
+
+
+
+from django.utils import timezone
+
+@login_required(login_url="login")
+def payment_gateway(request, css_id):
+    student = request.user.student
+    course_status = get_object_or_404(CourseStudentStatus, id=css_id, student=student)
+
+    if course_status.paid:
+        messages.info(request, "این دوره قبلاً پرداخت شده است.")
+        return redirect('payment_panel')
+
+    course = course_status.course
+
+    if request.method == "POST":
+        payment_result = request.POST.get("payment_result")
+
+        if payment_result == "success":
+            enrolled_courses = CourseStudentStatus.objects.filter(
+                student=student,
+                course__semester__active=True,
+                paid=True,
+                canceled=False
+            ).exclude(course=course).select_related('course')
+
+            has_conflict = False
+            current_times = set(course.time_slot.all())
+
+            for css in enrolled_courses:
+                other_times = set(css.course.time_slot.all())
+                if current_times & other_times: 
+                    has_conflict = True
+                    break
+
+            if has_conflict:
+                messages.error(request, "❌ تداخل زمانی با یک یا چند درس ثبت‌نام شده دارید.")
+                return redirect('payment_gateway', css_id=css_id)
+
+    
+            course_status.paid = True
+            course_status.registered_at = timezone.now()
+            course_status.save()
+
+            messages.success(request, f"✅ پرداخت شما برای «{course.unit.name}» با موفقیت انجام شد.")
+            return redirect('payment_panel')
+
+        elif payment_result == "failure":
+            messages.error(request, "❌ پرداخت ناموفق بود. لطفاً دوباره تلاش کنید.")
+            return redirect('payment_gateway', css_id=css_id)
+
+    return render(request, 'student/payment_gateway.html', {
+        'course': course,
+        'css_id': css_id,
     })
