@@ -20,24 +20,31 @@ class AdminStudentModificationForm(forms.ModelForm):
         ]
 
 class AdminUnitCreationForm(forms.ModelForm):
+    prerequisites = forms.ModelMultipleChoiceField(
+        queryset=Unit.objects.all(),  # pyright: ignore
+        required=False,
+        widget=forms.SelectMultiple(attrs={'size': 10})
+    )
+
     class Meta:
         model = Unit
-        fields = [
-            "name",
-            "description",
-            "unit_size",
-            "majors",
-        ]
+        fields = ["name", "description", "unit_size", "majors", "prerequisites"]
+        widgets = {
+            'majors': forms.SelectMultiple(attrs={'size': 5}),
+        }
 
 class AdminUnitModificationForm(forms.ModelForm):
+    prerequisites = forms.ModelMultipleChoiceField(
+        queryset=Unit.objects.all(), # pyright: ignore
+        required=False,
+        widget=forms.SelectMultiple(attrs={'size': 10})
+        )
     class Meta:
         model = Unit
-        fields = [
-            "name",
-            "description",
-            "unit_size",
-            "majors",
-        ]
+        fields = ["name", "description", "unit_size", "majors", "prerequisites"]
+        widgets = {
+            'majors': forms.SelectMultiple(attrs={'size': 5}),
+        }
 
 class AdminCourseCreationForm(forms.ModelForm):
     class Meta:

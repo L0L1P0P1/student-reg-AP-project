@@ -80,16 +80,26 @@ def admin_student_modification(request, pk):
 @admin_required
 def admin_list_all_units(request):
     query = request.GET.get('q', '')
+    prereq_query = request.GET.get('prereq_q', '')
     
     units = Unit.objects.all() # pyright: ignore
 
     if query:
         units = units.filter(
                 Q(name__icontains=query) |
-                Q(description__icontains=query)
+                Q(description__icontains=query) 
                 )
 
-    return render(request, "admin/units/list.html", {"units": units})
+    if prereq_query:
+        units = units.filter(
+            prerequisites__name__icontains=prereq_query
+        ).distinct()
+
+    return render(request, "admin/units/list.html", {
+        "units": units,
+        "query": query,
+        "prereq_query": prereq_query
+        })
 
 
 @admin_required
