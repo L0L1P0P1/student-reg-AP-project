@@ -59,8 +59,9 @@
         <div class="bg-white rounded-xl shadow-md overflow-hidden">
             <form method="post">
                 {% csrf_token %}
+                <!-- CRITICAL: Include the management form for the formset to work -->
                 {{ formset.management_form }}
-                
+
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
@@ -74,20 +75,26 @@
                         <tbody class="bg-white divide-y divide-gray-200">
                             {% for form in formset %}
                             <tr class="hover:bg-gray-50">
+                                <!-- CRITICAL: Render hidden fields (like the primary key 'id' of CourseStudentStatus) -->
+                                {% for hidden_field in form.hidden_fields %}
+                                    {{ hidden_field }}
+                                {% endfor %}
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                     {{ form.instance.student.student_id }}
-                                    {{ form.id }}
+                                    <!-- The hidden 'id' field is rendered above -->
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                     {{ form.instance.student.get_full_name }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    {{ form.score }}
-                                    {% if form.score.errors %}
-                                        <p class="text-red-500 text-xs mt-1">{{ form.score.errors }}</p>
+                                    <!-- Render the GRADE field -->
+                                    {{ form.grade }}
+                                    {% if form.grade.errors %}
+                                        <p class="text-red-500 text-xs mt-1">{{ form.grade.errors }}</p>
                                     {% endif %}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    <!-- Render the CANCELED field -->
                                     {{ form.canceled }}
                                     {% if form.canceled.errors %}
                                         <p class="text-red-500 text-xs mt-1">{{ form.canceled.errors }}</p>
@@ -104,7 +111,14 @@
                         </tbody>
                     </table>
                 </div>
-                
+
+                <!-- Display formset-wide errors -->
+                {% if formset.non_form_errors %}
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mt-4 mx-6">
+                        {{ formset.non_form_errors }}
+                    </div>
+                {% endif %}
+
                 <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
                     <div class="flex justify-end">
                         <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-lg transition duration-200">
@@ -118,25 +132,68 @@
 </div>
 
 <style>
-    input[type="number"], input[type="checkbox"] {
+    /* Style specifically for number inputs (grades) */
+    /* Allows empty values and decimal points */
+    input[type="number"] {
         width: 100%;
-        padding: 0.5rem;
+        /* Adjusted padding for better appearance in table cell */
+        padding: 0.25rem 0.5rem;
         border: 1px solid #d1d5db;
-        border-radius: 0.5rem;
+        border-radius: 0.375rem; /* Slightly smaller radius */
         font-size: 0.875rem;
+        /* Ensure width calculation includes padding/border */
+        box-sizing: border-box;
+        /* Allow empty input and decimal points */
+        /* Standard number inputs handle this. Ensure min/max aren't restricting. */
+        /* Optional: Set min/max if needed, e.g., min="0" max="20" */
+        /* Optional: Add focus style */
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     }
-    
+
     input[type="number"]:focus {
         outline: none;
-        ring: 2px;
-        ring-green-500;
-        border-color: #10b981;
+        /* Standard CSS for focus ring */
+        border-color: #10b981; /* green-500 */
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); /* green-500 with opacity */
     }
-    
+
+     /* Optional: Style for invalid input */
+    input[type="number"]:invalid {
+        /* border-color: #ef4444; */ /* red-500 */
+        /* box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2); */
+    }
+
+    /* Style specifically for checkboxes (canceled) */
     input[type="checkbox"] {
+        /* Remove any inherited padding */
+        padding: 0;
         width: 1.25rem;
         height: 1.25rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.25rem;
+        /* Center the checkbox within the table cell */
         margin: 0 auto;
+        display: block;
+        /* Optional: Add focus style */
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    input[type="checkbox"]:focus {
+        outline: none;
+        border-color: #10b981; /* green-500 */
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+
+    /* Optional: Style for disabled inputs */
+    input:disabled {
+        background-color: #f3f4f6; /* gray-100 */
+        cursor: not-allowed;
+        opacity: 0.8;
+    }
+
+    /* Ensure table cells size appropriately for inputs */
+    td.px-6.py-4 {
+        /* You might need to adjust padding or use specific classes if inputs are too cramped */
     }
 </style>
 {% endblock %}

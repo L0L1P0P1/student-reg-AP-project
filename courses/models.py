@@ -64,3 +64,5 @@ class CourseStudentStatus(models.Model):
                 self.passed=False
         super().save(*args, **kwargs)
 
+        self.student.calculate_gpa()  # pyright: ignore
+

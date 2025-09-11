@@ -98,6 +98,42 @@ class Student(User):
         
         return student_id
 
+    def calculate_gpa(self):
+        """
+        Calculates and updates the student's GPA based on passed courses.
+        GPA = (Sum of (grade * unit_size)) / (Sum of unit_size for passed courses)
+        Only considers courses where the student has passed (passed=True) and has a grade.
+        """
+        try:
+            from courses.models import CourseStudentStatus
+            passed_courses_grades = CourseStudentStatus.objects.filter(         # pyright: ignore
+                student=self,
+                passed=True,
+                grade__isnull=False,
+                canceled=False
+            ).select_related('course__unit')
+
+            total_weighted_points = 0
+            total_units_attempted = 0
+
+            for status in passed_courses_grades:
+                unit_size = status.course.unit.unit_size if status.course and status.course.unit else 0
+                if unit_size > 0 and status.grade is not None:
+                    total_weighted_points += status.grade * unit_size
+                    total_units_attempted += unit_size
+
+            if total_units_attempted > 0:
+                new_gpa = total_weighted_points / total_units_attempted
+            else:
+                new_gpa = 0.0
+
+            if self.gpa != new_gpa:
+                self.gpa = new_gpa
+                self.save(update_fields=['gpa'])
+
+        except Exception as e:
+            print(f"Error calculating GPA for student {self.student_id if hasattr(self, 'student_id') else 'ID_NA'}: {e}")
+
     def save(self, *args, **kwargs):
         self.role = User.Role.STUDENT
         if not self.first_semester:
