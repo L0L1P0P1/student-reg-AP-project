@@ -32,7 +32,7 @@ def student_signup(request):
                 
                 auth_login(request, user)
                 messages.success(request, 'ثبت نام شما با موفقیت انجام شد!')
-                return redirect('home')
+                return redirect('hub')
             except Exception as e:
                 messages.error(request, f'خطا در ثبت نام: {str(e)}')
     else:
@@ -65,7 +65,7 @@ def instructor_signup(request):
                 
                 auth_login(request, user)
                 messages.success(request, 'ثبت نام استاد با موفقیت انجام شد!')
-                return redirect('home')
+                return redirect('hub')
             except Exception as e:
                 messages.error(request, f'خطا در ثبت نام: {str(e)}')
     else:
@@ -101,7 +101,7 @@ def admin_signup(request):
     
     return render(request, 'users/signup_admin.html', {'form': form})
 '''
-@login_required(login_url="/login/")
+@login_required(login_url="login")
 def hub(request):
     user = request.user 
 

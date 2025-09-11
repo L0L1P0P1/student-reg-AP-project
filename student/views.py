@@ -4,44 +4,72 @@ from django.contrib import messages
 from django.db.models import Prefetch, Count, Sum
 from courses.models import Course, CourseStudentStatus, MajorUnit, Unit, TimeSlots
 
-@login_required(login_url="/login/")
+@login_required(login_url="login")
 def available_courses(request):
-    student = request.user.student  
-
+    student = request.user.student
     major_units = Unit.objects.filter(majors=student.major) # pyright: ignore
+    available_courses = Course.objects.filter(unit__in=major_units, semester__active=True) # pyright: ignore
+    selected_course_ids = list(CourseStudentStatus.objects.filter( # pyright: ignore
+        student=student,
+    ).values_list('course_id', flat=True))
+    passed_course_statuses = CourseStudentStatus.objects.filter(
+        student=student,
+        passed=True # pyright: ignore
+    ).select_related('course__unit')
 
-    # Only fetch courses from active semester(s)
-    available_courses = Course.objects.filter(
-        unit__in=major_units,
-        semester__active=True
-    )
+    passed_unit_ids = set()
+    for status in passed_course_statuses:
+        if status.course and status.course.unit:
+             passed_unit_ids.add(status.course.unit.id)
+
+    eligible_courses = []
+    for course in available_courses:
+        unit = course.unit
+        if unit:
+            prereq_unit_ids = set(unit.prerequisites.values_list('id', flat=True)) # pyright: ignore
+            if prereq_unit_ids.issubset(passed_unit_ids):
+                eligible_courses.append(course)
 
     return render(request, "student/available_courses.html", {
-        "available_courses": available_courses
+        "available_courses": eligible_courses, # Pass only eligible courses
+        "selected_course_ids": selected_course_ids
     })
 
-
-@login_required(login_url="/login/")
+@login_required(login_url="login")
 def other_courses(request):
     student = request.user.student
-
-    # IDs of courses the student has already taken
-    taken_courses = CourseStudentStatus.objects.filter(
-        student=student
-    ).values_list("course_id", flat=True)
-
-    # Courses in student's major but not yet taken
-    other_courses = Course.objects.filter(
+    taken_courses = CourseStudentStatus.objects.filter(student=student).values_list("course_id", flat=True) # pyright: ignore
+    other_courses_queryset = Course.objects.filter( # pyright: ignore
         unit__majors=student.major,
         semester__active=True
     ).exclude(id__in=taken_courses)
 
+    passed_course_statuses = CourseStudentStatus.objects.filter(   # pyright: ignore
+        student=student,
+        passed=True # pyright: ignore
+    ).select_related('course__unit')
+
+    passed_unit_ids = set()
+    for status in passed_course_statuses:
+        if status.course and status.course.unit:
+             passed_unit_ids.add(status.course.unit.id)
+
+    eligible_other_courses = []
+    for course in other_courses_queryset:
+        unit = course.unit
+        if unit:
+            prereq_unit_ids = set(unit.prerequisites.values_list('id', flat=True)) # pyright: ignore
+            if prereq_unit_ids.issubset(passed_unit_ids):
+                eligible_other_courses.append(course)
+
+    selected_course_ids = list(taken_courses) 
+
     return render(request, "student/other_courses.html", {
-        "other_courses": other_courses
+        "other_courses": eligible_other_courses, # Pass only eligible courses
+        "selected_course_ids": selected_course_ids
     })
 
-
-@login_required(login_url="/login/")
+@login_required(login_url="login")
 def select_course(request, course_id):
     student = request.user.student
     course = get_object_or_404(Course, id=course_id)
@@ -69,7 +97,7 @@ def select_course(request, course_id):
         registered_times = set(css.course.time_slot.all())
         if course_times & registered_times:
             messages.error(request, "Schedule conflict with another course.")
-            return redirect("available_courses")
+            return redirect("student_weekly_program")
 
     # 5. Register student
     CourseStudentStatus.objects.create(
@@ -83,7 +111,7 @@ def select_course(request, course_id):
     return redirect("available_courses")
 
 ## Checking Scores
-@login_required(login_url="/login/")
+@login_required(login_url="login")
 def check_scores(request):
     student = request.user.student
     
@@ -117,7 +145,7 @@ def cancel_course(request, css_id):
 '''
 
 ## Weekly Program
-@login_required(login_url="/login/")
+@login_required(login_url="login")
 def student_weekly_program(request):
 
     student_profile = request.user.student
@@ -138,8 +166,8 @@ def student_weekly_program(request):
         'enrolled_courses': enrolled_courses,
     })
 
-
-@login_required
+  
+@login_required(login_url="login")
 def payment_panel(request, css_id=None):
     student = request.user.student
 
