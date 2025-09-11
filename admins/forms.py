@@ -1,6 +1,6 @@
 from django import forms
 from users.models import Student, Instructor, Admin
-from courses.models import Unit, Course, Semester
+from courses.models import Unit, Course, Semester, CourseStudentStatus
 
 
 class AdminStudentModificationForm(forms.ModelForm):
@@ -69,6 +69,23 @@ class AdminCourseModificationForm(forms.ModelForm):
             "time_slot",
             "price",
         ]
+
+class AdminCSSInlineForm(forms.ModelForm):
+    class Meta:
+        model = CourseStudentStatus
+        fields = ['student', 'grade', 'paid', 'passed', 'canceled']
+        widgets = {
+            'grade': forms.NumberInput(attrs={'step': "0.25"}), # Example for decimal grades
+        }
+
+AdminCSSInlineFormSet = forms.inlineformset_factory(
+    Course,                    
+    CourseStudentStatus,       
+    form=AdminCSSInlineForm, 
+    extra=0,                   
+    can_delete=True,          
+)
+
 
 class AdminInstructorModificationForm(forms.ModelForm):
     class Meta:
