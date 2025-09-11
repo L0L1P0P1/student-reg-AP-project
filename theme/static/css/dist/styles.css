@@ -1037,6 +1037,11 @@
     }
   }
   @media (hover: hover) {
+    .hover\:bg-green-200:hover {
+      background-color: var(--color-green-200);
+    }
+  }
+  @media (hover: hover) {
     .hover\:bg-green-600:hover {
       background-color: var(--color-green-600);
     }

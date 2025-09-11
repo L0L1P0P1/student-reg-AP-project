@@ -13,6 +13,7 @@ urlpatterns = [
     path('scores/', views.check_scores, name='check_scores'),
     
     # Payment
+    path('unpaid-courses/', views.unpaid_courses, name='unpaid_courses'),
     path('pay-course/<int:css_id>/', views.pay_course, name='pay_course'),
 
     #weekly-program

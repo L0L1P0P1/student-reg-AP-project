@@ -77,7 +77,16 @@ def admin_student_modification(request, pk):
 @login_required(login_url="/login/")
 @admin_required
 def admin_list_all_units(request):
+    query = request.GET.get('q', '')
+    
     units = Unit.objects.all() # pyright: ignore
+
+    if query:
+        units = units.filter(
+                Q(name__icontains=query) |
+                Q(description__icontains=query)
+                )
+
     return render(request, "admin/units/list.html", {"units": units})
 
 
