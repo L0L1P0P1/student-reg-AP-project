@@ -1,0 +1,152 @@
+<!-- courses/templates/courses/view_attachment.html -->
+{% extends 'base.html' %}
+
+{% block title %}{{ attachment.name }} - پیوست{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
+    <div class="container mx-auto px-4">
+        <!-- Header -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <div class="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mr-4">
+                        {% if attachment.get_primary_content_type == 'file' %}
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        {% elif attachment.get_primary_content_type == 'text' %}
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        {% else %}
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905a3.61 3.61 0 01-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                            </svg>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">
+                            {{ attachment.name }}
+                        </h1>
+                        <p class="text-gray-600">
+                            پیوست برای: <span class="font-medium">{{ attachment.course.unit.name }}</span> <!-- Link to course if needed -->
+                        </p>
+                    </div>
+                </div>
+                <div class="flex space-x-2">
+                    {% if attachment.get_primary_content_type == 'file' and attachment.file %}
+                        <a href="{{ attachment.file.url }}" target="_blank" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            دانلود فایل
+                        </a>
+                    {% endif %}
+                    <!-- Improved Back Button -->
+                    <button onclick="history.back()" class="bg-red-100 hover:bg-red-200 text-red-700 font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        بازگشت
+                    </button>
+                    <!-- Alternative Back Button (if you have a specific list URL, e.g., the course attachments list)
+                    <a href="{% url 'student_course_attachments' attachment.course.id %}" class="bg-red-100 hover:bg-red-200 text-red-700 font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        بازگشت
+                    </a>
+                    -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Attachment Details -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">جزئیات پیوست</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                    <span class="font-medium text-gray-700">نام:</span>
+                    <span class="text-gray-900">{{ attachment.name }}</span>
+                </div>
+                <div>
+                    <span class="font-medium text-gray-700">درس:</span>
+                    <span class="text-gray-900">{{ attachment.course.unit.name }}</span>
+                </div>
+                <div>
+                    <span class="font-medium text-gray-700">نوع:</span>
+                    <span class="text-gray-900">
+                        {% if attachment.get_primary_content_type == 'file' %}
+                            فایل
+                            {% if file_mime_type %}
+                                ({{ file_mime_type }})
+                            {% endif %}
+                        {% elif attachment.get_primary_content_type == 'text' %}
+                            متن
+                        {% else %}
+                            نامشخص
+                        {% endif %}
+                    </span>
+                </div>
+                <div>
+                    <span class="font-medium text-gray-700">تاریخ آپلود:</span>
+                    <span class="text-gray-900">{{ attachment.uploaded_at|date:"Y-m-d H:i" }}</span> <!-- Adjusted date format -->
+                </div>
+                {% if attachment.description %}
+                <div class="md:col-span-2">
+                    <span class="font-medium text-gray-700">توضیحات:</span>
+                    <span class="text-gray-900">{{ attachment.description }}</span>
+                </div>
+                {% endif %}
+                 {% if attachment.get_primary_content_type == 'file' and attachment.file %}
+                <div class="md:col-span-2">
+                    <span class="font-medium text-gray-700">نام فایل:</span>
+                    <span class="text-gray-900">{{ attachment.get_file_name }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Content Display -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">
+                {% if attachment.get_primary_content_type == 'text' %}محتوای متنی{% else %}پیش‌نمایش محتوای فایل{% endif %}
+            </h2>
+
+            {% if file_display_error %}
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                    <strong class="font-bold">خطا:</strong>
+                    <span class="block sm:inline">{{ file_display_error }}</span>
+                </div>
+            {% elif file_content %}
+                {% if is_text_file %}
+                    <div class="border border-gray-200 rounded-lg p-4 bg-gray-50 max-h-96 overflow-y-auto">
+                        {% if file_encoding == 'latin-1' %}
+                            <p class="text-xs text-gray-500 mb-2"><em>نکته: فایل با رمزگذاری Latin-1 خوانده شده است.</em></p>
+                        {% endif %}
+                        {% if file_truncated %}
+                             <p class="text-xs text-gray-500 mb-2"><em>نکته: فقط ۱۰ کیلوبایت اول فایل نمایش داده شده است.</em></p>
+                        {% endif %}
+                        <pre class="whitespace-pre-wrap text-sm font-mono">{{ file_content }}</pre> <!-- Use <pre> to preserve formatting, added font-mono -->
+                    </div>
+                {% else %}
+                    <!-- Handle non-text files if needed, or just show download link -->
+                    <p class="text-gray-700">
+                        این فایل از نوع <strong>{{ file_mime_type }}</strong> است و امکان نمایش مستقیم آن وجود ندارد.
+                        <a href="{{ attachment.file.url }}" target="_blank" class="text-blue-600 hover:underline">برای دانلود اینجا کلیک کنید</a>.
+                    </p>
+                {% endif %}
+            {% elif attachment.get_primary_content_type == 'text' %}
+                 <!-- This case handles text attachments that might be empty -->
+                 <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                    <p class="text-gray-700"><em>محتوای متنی این پیوست خالی است.</em></p>
+                </div>
+            {% else %}
+                <!-- Fallback if no content could be determined or displayed -->
+                <p class="text-gray-700">پیش‌نمایشی برای این پیوست موجود نیست.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,47 +1,156 @@
+<!-- templates/base.html -->
 {% load static tailwind_tags %}
 <!DOCTYPE html>
 <html lang="fa" dir="rtl" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}دانشگاه گیلان{% endblock %}</title>
-    
+    <title>{% block title %}سیستم ثبت نام دانشجویی{% endblock %}</title>
     {% tailwind_css %}
-    
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Vazirmatn', sans-serif;
             direction: rtl;
         }
-        
         .errorlist {
             color: #ef4444;
             font-size: 0.875rem;
             margin-top: 0.25rem;
         }
-        
         .helptext {
             color: #6b7280;
             font-size: 0.75rem;
             margin-top: 0.25rem;
         }
-        
         input, select, textarea {
             @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500;
         }
-        
         .btn-primary {
             @apply bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-200;
         }
-        
         .btn-secondary {
             @apply bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition duration-200;
+        }
+
+        /* Styles for Messages in Bottom Left */
+        #django-messages-container {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 10000; /* High z-index to appear above other content */
+            width: auto;
+            max-width: 90%; /* Prevent messages from being too wide on large screens */
+        }
+
+        .django-message {
+            @apply px-4 py-3 rounded relative mb-3 text-right text-sm; /* Use Tailwind classes for base styling */
+            min-width: 250px; /* Minimum width for the message box */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+            opacity: 1;
+            transform: translateX(0);
+            transition: opacity 0.5s ease, transform 0.5s ease; /* Smooth transitions for showing/hiding */
+        }
+
+        .django-message.error {
+            @apply bg-red-100 border border-red-400 text-red-700;
+        }
+        .django-message.success {
+            @apply bg-green-100 border border-green-400 text-green-700;
+        }
+        .django-message.warning {
+            @apply bg-yellow-100 border border-yellow-400 text-yellow-700;
+        }
+        .django-message.info {
+            @apply bg-blue-100 border border-blue-400 text-blue-700;
+        }
+
+        /* Optional: Add a close button */
+        .django-message .close-btn {
+            position: absolute;
+            top: 8px;
+            left: 8px; /* Left for RTL */
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            line-height: 1;
+            color: inherit;
+            opacity: 0.7;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .django-message .close-btn:hover {
+            opacity: 1;
+        }
+
+        /* Animation for hiding messages */
+        .django-message.hiding {
+            opacity: 0;
+            transform: translateX(-20px); /* Slide slightly to the left (RTL) when hiding */
         }
     </style>
 </head>
 <body class="bg-gray-50">
     {% block content %}
     {% endblock %}
+
+    <!-- Messages Section (Bottom Left) -->
+    {% if messages %}
+    <div id="django-messages-container">
+        {% for message in messages %}
+        <div class="django-message {{ message.tags }}" role="alert">
+            <span class="block sm:inline">{{ message }}</span>
+            <!-- Optional: Add a close button -->
+            <button class="close-btn" onclick="closeMessage(this)">&times;</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <!-- End Messages Section -->
+
+    <script>
+        // Function to close a message
+        function closeMessage(buttonElement) {
+            const messageDiv = buttonElement.parentElement;
+            messageDiv.classList.add('hiding');
+            // Remove the element after the transition completes
+            setTimeout(() => {
+                messageDiv.remove();
+                // If no messages are left, remove the container
+                const container = document.getElementById('django-messages-container');
+                if (container && container.children.length === 0) {
+                    container.remove();
+                }
+            }, 500); // Match the CSS transition duration
+        }
+
+        // Optional: Automatically hide messages after a delay (e.g., 5 seconds)
+        document.addEventListener('DOMContentLoaded', function() {
+            const messages = document.querySelectorAll('.django-message');
+            messages.forEach(function(msgDiv) {
+                 // Don't auto-hide error messages by default, or adjust timeout as needed
+                 // Example: Auto-hide success and info messages
+                 if (msgDiv.classList.contains('success') || msgDiv.classList.contains('info')) {
+                    setTimeout(() => {
+                        if (!msgDiv.classList.contains('hiding')) { // Check if not already being closed manually
+                             msgDiv.classList.add('hiding');
+                             setTimeout(() => {
+                                 msgDiv.remove();
+                                 const container = document.getElementById('django-messages-container');
+                                 if (container && container.children.length === 0) {
+                                     container.remove();
+                                 }
+                             }, 500);
+                        }
+                    }, 5000); // 5000 milliseconds = 5 seconds
+                 }
+            });
+        });
+    </script>
 </body>
 </html>

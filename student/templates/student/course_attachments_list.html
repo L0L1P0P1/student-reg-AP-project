@@ -1,0 +1,86 @@
+<!-- student/templates/student/course_attachments_list.html -->
+{% extends 'base.html' %}
+
+{% block title %}پیوست‌های درسی - پنل دانشجو{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+    <div class="container mx-auto px-4">
+        <!-- Header -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mr-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">
+                            پیوست‌های درسی
+                        </h1>
+                        <p class="text-gray-600">
+                            لیست دروس شما با پیوست‌های موجود
+                        </p>
+                    </div>
+                </div>
+                <a href="{% url 'available_courses' %}" class="bg-red-100 hover:bg-red-200 text-red-700 font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    بازگشت به دروس
+                </a>
+            </div>
+        </div>
+
+        <!-- Enrolled Courses with Attachments -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="overflow-x-auto">
+                {% if enrolled_course_statuses %}
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">نام درس</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">استاد</th>
+                            <!-- <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"># پیوست‌ها</th> -->
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for css in enrolled_course_statuses %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                {{ css.course.unit.name }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {{ css.course.instructor.get_full_name }}
+                            </td>
+                            <!-- Optional: Show attachment count
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {{ css.attachment_count }}
+                            </td>
+                            -->
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                {% if css.course.attachments.exists %}
+                                    <a href="{% url 'student_course_attachments' css.course.id %}" class="text-blue-600 hover:text-blue-900 mr-3">
+                                        مشاهده پیوست‌ها ({{ css.course.attachments.count }})
+                                    </a>
+                                {% else %}
+                                    <span class="text-gray-400">بدون پیوست</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="p-6 text-center text-gray-500">
+                    شما در ترم فعال درسی ثبت نام نکرده‌اید یا هیچ درسی پیوست ندارد.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
